@@ -1,9 +1,8 @@
-from typing import List
+'''from typing import List
 import random
 import math
 
 from providers.base import BaseProvider
-from api.models import TransportItem, ScooterItem
 
 class TierProvider(BaseProvider):
     """Provider for TIER scooters data (mock implementation)"""
@@ -32,3 +31,4 @@ class TierProvider(BaseProvider):
             scooters.append(scooter)
         
         return scooters
+'''

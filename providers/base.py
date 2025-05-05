@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 import httpx
-from api.models import TransportItem
 class BaseProvider(ABC):
     """Base class for all mobility providers"""
     def __init__(self):
