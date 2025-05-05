@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional, List
 from datetime import datetime
 
 from providers.base import BaseProvider
-from api.models import Route, RouteLeg, RoutePoint, RouteResponse
+from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep
 class BvgProvider(BaseProvider):
     """Provider for BVG public transport data"""
     
@@ -216,7 +216,12 @@ class BvgProvider(BaseProvider):
                     for remark in leg.get("remarks", []):
                         if remark.get("type") == "warning" and "summary" in remark:
                             warnings.append(remark["summary"])
-                    
+                    # Extract platform information
+                    platform = None
+                    if leg.get("departurePlatform"):
+                        platform = leg.get("departurePlatform")
+                    elif leg.get("arrivalPlatform"):
+                        platform = leg.get("arrivalPlatform")
                     # Create leg
                     route_leg = RouteLeg(
                         start=start_point,
@@ -228,9 +233,9 @@ class BvgProvider(BaseProvider):
                         arrival_time=arrival_time,
                         delay_minutes=delay_minutes,
                         distance=distance,
+                        platform=platform,
                         warnings=warnings
                     )
-                    
                     legs.append(route_leg)
                 
                 # Calculate route properties
@@ -262,3 +267,110 @@ class BvgProvider(BaseProvider):
                 continue
         
         return routes
+    async def get_pretty_routes(
+        self, 
+        from_lat: float, 
+        from_lon: float, 
+        to_lat: float, 
+        to_lon: float,
+        departure_time: Optional[datetime] = None,
+        max_results: int = 3
+    ) -> PrettyRouteResponse:
+        """
+        Get user-friendly routes between two points
+        
+        Args:
+            from_lat: Starting point latitude
+            from_lon: Starting point longitude
+            to_lat: Destination latitude
+            to_lon: Destination longitude
+            departure_time: Departure time (default: now)
+            max_results: Maximum number of route options
+            
+        Returns:
+            User-friendly route data
+        """
+        try:
+            # Get parsed route data
+            parsed_routes = await self.get_parsed_routes(
+                from_lat=from_lat,
+                from_lon=from_lon,
+                to_lat=to_lat,
+                to_lon=to_lon,
+                departure_time=departure_time,
+                max_results=max_results
+            )
+            
+            # Transform to pretty routes
+            pretty_routes = []
+            
+            for route in parsed_routes.routes:
+                # Generate steps
+                steps = []
+                alerts = []
+                
+                for leg in route.legs:
+                    # Collect alerts/warnings
+                    for warning in leg.warnings:
+                        if warning not in alerts:
+                            alerts.append(warning)
+                    
+                    # Create step
+                    duration_min = int((leg.arrival_time - leg.departure_time).total_seconds() / 60)
+                    
+                    if leg.type == "walking":
+                        steps.append(RouteStep(
+                            type="walking",
+                            instruction=f"Walk to {leg.end.name}",
+                            duration=f"{duration_min} min",
+                            distance=f"{leg.distance}m" if leg.distance else None,
+                            icon="walking"
+                        ))
+                    else:
+                        steps.append(RouteStep(
+                            type=leg.type,
+                            instruction=f"Take {leg.line} towards {leg.direction}",
+                            duration=f"{duration_min} min",
+                            platform=f"Platform {leg.departure_platform}" if hasattr(leg, 'departure_platform') and leg.departure_platform else None,
+                            icon=leg.type
+                        ))
+                
+                # Generate summary
+                summary_parts = []
+                for leg in route.legs:
+                    duration_min = int((leg.arrival_time - leg.departure_time).total_seconds() / 60)
+                    if leg.type == "walking":
+                        summary_parts.append(f"Walk {duration_min} min")
+                    else:
+                        summary_parts.append(f"{leg.line} ({duration_min} min)")
+                
+                summary = " → ".join(summary_parts)
+                
+                # Calculate walking time
+                walking_time = 0
+                for leg in route.legs:
+                    if leg.type == "walking":
+                        walking_time += int((leg.arrival_time - leg.departure_time).total_seconds() / 60)
+                
+                # Create pretty route
+                pretty_route = PrettyRoute(
+                    summary=summary,
+                    steps=steps,
+                    alerts=alerts,
+                    departure=route.departure_time.strftime("%H:%M"),
+                    arrival=route.arrival_time.strftime("%H:%M"),
+                    total_duration=f"{route.duration_minutes} minutes",
+                    transfers=route.transfers,
+                    walking_distance=f"{route.walking_distance}m",
+                    walking_time=f"{walking_time} min"
+                )
+                
+                pretty_routes.append(pretty_route)
+            
+            return PrettyRouteResponse(routes=pretty_routes)
+            
+        except Exception as e:
+            print(f"Error creating pretty routes: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return PrettyRouteResponse(routes=[])
