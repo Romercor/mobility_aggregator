@@ -9,6 +9,14 @@ class RoutePoint(BaseModel):
     longitude: float
     is_stop: bool  # Whether this is a stop or just coordinates
 
+class Stopover(BaseModel):
+    """Intermediate stop in a route leg"""
+    name: str
+    latitude: float
+    longitude: float
+    arrival_time: Optional[datetime] = None
+    departure_time: Optional[datetime] = None
+    platform: Optional[str] = None
 class RouteLeg(BaseModel):
     """Segment of a route"""
     start: RoutePoint
@@ -22,7 +30,7 @@ class RouteLeg(BaseModel):
     distance: Optional[int] = None  # Distance in meters for walking segments
     platform: Optional[str] = None  # Platform information if available
     warnings: List[str] = Field(default_factory=list)  # Brief warnings
-
+    stopovers: List[Stopover] = Field(default_factory=list)  # Intermediate stops
 class Route(BaseModel):
     """Complete route"""
     legs: List[RouteLeg]
@@ -38,7 +46,7 @@ class RouteResponse(BaseModel):
 
 class RouteStep(BaseModel):
     """User-friendly step in a journey"""
-    type: str  # "walking", "subway", "bus", etc.
+    type: str
     instruction: str  # "Walk to U Ernst-Reuter-Platz", "Take U12 towards Warschauer Straße"
     duration: str  # "5 min"
     distance: Optional[str] = None  # "365m" (for walking)

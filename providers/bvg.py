@@ -1,9 +1,9 @@
 import httpx
 from typing import Dict, Any, Optional, List
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from utils.geocoding import reverse_geocode
 from providers.base import BaseProvider
-from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep
+from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep, Stopover
 class BvgProvider(BaseProvider):
     """Provider for BVG public transport data"""
     
@@ -18,7 +18,8 @@ class BvgProvider(BaseProvider):
         to_lat: float, 
         to_lon: float,
         departure_time: Optional[datetime] = None,
-        max_results: int = 3
+        max_results: int = 2,
+        include_stopovers: bool = True
     ) -> Dict[str, Any]:
         """
         Get routes between two points using only coordinates
@@ -48,7 +49,8 @@ class BvgProvider(BaseProvider):
                 "to.address": f"{to_lat},{to_lon}",
                 
                 # Number of results
-                "results": max_results
+                "results": max_results,
+                "stopovers" : "true"  if include_stopovers else "false"
             }
             
             # Add departure time if specified
@@ -75,7 +77,8 @@ class BvgProvider(BaseProvider):
         to_lat: float, 
         to_lon: float,
         departure_time: Optional[datetime] = None,
-        max_results: int = 3
+        max_results: int = 3,
+        include_stopovers: bool = False
     ) -> RouteResponse:
         """
         Get parsed routes between two points
@@ -99,11 +102,12 @@ class BvgProvider(BaseProvider):
                 to_lat=to_lat,
                 to_lon=to_lon,
                 departure_time=departure_time,
-                max_results=max_results
+                max_results=max_results,
+                include_stopovers=include_stopovers
             )
             
             # Parse raw data
-            parsed_routes = self._parse_journeys(raw_data)
+            parsed_routes = await self._parse_journeys(raw_data, include_stopovers)
             
             return RouteResponse(routes=parsed_routes)
             
@@ -113,7 +117,7 @@ class BvgProvider(BaseProvider):
             traceback.print_exc()
             return RouteResponse(routes=[])
     
-    def _parse_journeys(self, raw_data: Dict[str, Any]) -> List[Route]:
+    async def _parse_journeys(self, raw_data: Dict[str, Any], include_stopovers: bool = False) -> List[Route]:
         """Parse raw journey data into Route objects"""
         if "journeys" not in raw_data:
             return []
@@ -140,7 +144,9 @@ class BvgProvider(BaseProvider):
                     else:
                         origin_lat = origin.get("latitude", 0)
                         origin_lon = origin.get("longitude", 0)
-                    
+                    # Use reverse geocoding for unknown locations
+                    if origin_name is None or origin_name == "Unknown":
+                        origin_name = await reverse_geocode(origin_lat, origin_lon)
                     start_point = RoutePoint(
                         name=origin_name,
                         latitude=origin_lat,
@@ -161,7 +167,9 @@ class BvgProvider(BaseProvider):
                     else:
                         dest_lat = destination.get("latitude", 0)
                         dest_lon = destination.get("longitude", 0)
-                    
+                    # Use reverse geocoding for unknown locations
+                    if dest_name is None or dest_name == "Unknown":
+                        dest_name = await reverse_geocode(dest_lat, dest_lon)
                     end_point = RoutePoint(
                         name=dest_name,
                         latitude=dest_lat,
@@ -208,20 +216,29 @@ class BvgProvider(BaseProvider):
                         delay_minutes = arrival_delay // 60
                     
                     # Parse departure and arrival times
-                    departure_time = datetime.fromisoformat(leg["departure"].replace('Z', '+00:00'))
-                    arrival_time = datetime.fromisoformat(leg["arrival"].replace('Z', '+00:00'))
+                    if leg.get("departure"):
+                        departure_time = datetime.fromisoformat(leg["departure"].replace('Z', '+00:00'))
+                    else:
+                        departure_time = datetime.now()
+
+                    if leg.get("arrival"):
+                        arrival_time = datetime.fromisoformat(leg["arrival"].replace('Z', '+00:00'))
+                    else:
+                        arrival_time = departure_time + timedelta(minutes=1)
                     
                     # Get warnings
                     warnings = []
                     for remark in leg.get("remarks", []):
                         if remark.get("type") == "warning" and "summary" in remark:
                             warnings.append(remark["summary"])
+                    
                     # Extract platform information
                     platform = None
                     if leg.get("departurePlatform"):
                         platform = leg.get("departurePlatform")
                     elif leg.get("arrivalPlatform"):
                         platform = leg.get("arrivalPlatform")
+                    
                     # Create leg
                     route_leg = RouteLeg(
                         start=start_point,
@@ -236,6 +253,42 @@ class BvgProvider(BaseProvider):
                         platform=platform,
                         warnings=warnings
                     )
+
+                    # Process stopovers
+                    stopovers = []
+                    if include_stopovers and leg.get("stopovers") and leg_type != "walking":
+                        for stopover in leg.get("stopovers", []):
+                            if stopover.get("stop") and stopover.get("stop").get("location"):
+                                stop_location = stopover["stop"]["location"]
+                                    
+                                # Parse arrival and departure times if available
+                                arrival_time = None
+                                departure_time = None
+                                    
+                                if stopover.get("arrival"):
+                                    try:
+                                        arrival_time = datetime.fromisoformat(stopover["arrival"].replace('Z', '+00:00'))
+                                    except (AttributeError, ValueError):
+                                        arrival_time = None
+                                                                    
+                                if stopover.get("departure"):
+                                    try:
+                                        departure_time = datetime.fromisoformat(stopover["departure"].replace('Z', '+00:00'))
+                                    except (AttributeError, ValueError):
+                                        departure_time = None
+                                    
+                                # Create stopover object
+                                stopover_obj = Stopover(
+                                    name=stopover["stop"].get("name", "Unknown Stop"),
+                                    latitude=stop_location.get("latitude", 0),
+                                    longitude=stop_location.get("longitude", 0),
+                                    arrival_time=arrival_time,
+                                    departure_time=departure_time,
+                                    platform=stopover.get("platform")
+                                )
+                                stopovers.append(stopover_obj)
+
+                    route_leg.stopovers = stopovers
                     legs.append(route_leg)
                 
                 # Calculate route properties
@@ -274,34 +327,23 @@ class BvgProvider(BaseProvider):
         to_lat: float, 
         to_lon: float,
         departure_time: Optional[datetime] = None,
-        max_results: int = 3
+        max_results: int = 3,
+        include_stopovers: bool = False
     ) -> PrettyRouteResponse:
         """
         Get user-friendly routes between two points
-        
-        Args:
-            from_lat: Starting point latitude
-            from_lon: Starting point longitude
-            to_lat: Destination latitude
-            to_lon: Destination longitude
-            departure_time: Departure time (default: now)
-            max_results: Maximum number of route options
-            
-        Returns:
-            User-friendly route data
         """
         try:
-            # Get parsed route data
             parsed_routes = await self.get_parsed_routes(
                 from_lat=from_lat,
                 from_lon=from_lon,
                 to_lat=to_lat,
                 to_lon=to_lon,
                 departure_time=departure_time,
-                max_results=max_results
+                max_results=max_results,
+                include_stopovers=include_stopovers
             )
             
-            # Transform to pretty routes
             pretty_routes = []
             
             for route in parsed_routes.routes:
@@ -327,11 +369,32 @@ class BvgProvider(BaseProvider):
                             icon="walking"
                         ))
                     else:
+                        # Generate information about all stops
+                        stop_info = ""
+                        if include_stopovers and leg.stopovers and len(leg.stopovers) > 0:
+                            # Collect stop names with arrival times
+                            stop_list = []
+                            for stopover in leg.stopovers:
+                                if stopover.arrival_time:
+                                    stop_time = stopover.arrival_time.strftime("%H:%M")
+                                    stop_list.append(f"{stopover.name} ({stop_time})")
+                                else:
+                                    stop_list.append(stopover.name)
+                            
+                            # Add stops information to the instruction
+                            if stop_list:
+                                stop_info = "\nStops: " + " → ".join(stop_list)
+                        
+                        # Create full instruction with main route and stops
+                        instruction = f"Take {leg.line} towards {leg.direction}"
+                        if stop_info:
+                            instruction += stop_info
+                        
                         steps.append(RouteStep(
                             type=leg.type,
-                            instruction=f"Take {leg.line} towards {leg.direction}",
+                            instruction=instruction,
                             duration=f"{duration_min} min",
-                            platform=f"Platform {leg.departure_platform}" if hasattr(leg, 'departure_platform') and leg.departure_platform else None,
+                            platform=leg.platform,
                             icon=leg.type
                         ))
                 

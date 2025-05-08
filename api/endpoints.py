@@ -17,7 +17,8 @@ async def get_routes(
     to_lat: float = Query(..., description="Destination latitude"),
     to_lon: float = Query(..., description="Destination longitude"),
     departure: Optional[str] = Query(None, description="Departure time in ISO format (e.g. 2025-05-04T21:41:00+02:00)"),
-    results: int = Query(1, description="Maximum number of route options", ge=1, le=5)
+    results: int = Query(1, description="Maximum number of route options", ge=1, le=5),
+    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way")
 ):
     """
     Get route data from BVG API
@@ -41,7 +42,8 @@ async def get_routes(
             to_lat=to_lat,
             to_lon=to_lon,
             departure_time=departure_time,
-            max_results=results
+            max_results=results,
+            include_stopovers=stopovers
         )
         
         return routes_data
@@ -55,7 +57,8 @@ async def get_routes(
     to_lat: float = Query(..., description="Destination latitude"),
     to_lon: float = Query(..., description="Destination longitude"),
     departure: Optional[str] = Query(None, description="Departure time in ISO format (e.g. 2025-05-05T11:09:00+02:00)"),
-    results: int = Query(1, description="Maximum number of route options", ge=1, le=5)
+    results: int = Query(1, description="Maximum number of route options", ge=1, le=5),
+    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way")
 ):
     """
     Get structured route data from BVG API
@@ -96,7 +99,8 @@ async def get_routes(
             to_lat=to_lat,
             to_lon=to_lon,
             departure_time=departure_time,
-            max_results=results
+            max_results=results,
+            include_stopovers=stopovers 
         )
         
         # Cache the results
@@ -112,7 +116,8 @@ async def get_pretty_routes(
     to_lat: float = Query(..., description="Destination latitude"),
     to_lon: float = Query(..., description="Destination longitude"),
     departure: Optional[str] = Query(None, description="Departure time in ISO format (e.g. 2025-05-05T11:09:00+02:00)"),
-    results: int = Query(1, description="Maximum number of route options", ge=1, le=5)
+    results: int = Query(1, description="Maximum number of route options", ge=1, le=5),
+    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way")
 ):
     """
     Get user-friendly route data formatted for display
@@ -153,7 +158,8 @@ async def get_pretty_routes(
             to_lat=to_lat,
             to_lon=to_lon,
             departure_time=departure_time,
-            max_results=results
+            max_results=results,
+            include_stopovers=stopovers
         )
         
         # Cache the results
