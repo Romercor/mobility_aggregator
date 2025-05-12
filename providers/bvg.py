@@ -62,10 +62,27 @@ class BvgProvider(BaseProvider):
                 f"{self.base_url}/journeys",
                 params=params
             )
-            response.raise_for_status()
-            
-            # Return raw data
-            return response.json()
+            try:
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as e:
+                # Handle API errors with informative messages
+                if e.response.status_code == 404:
+                    try:
+                        error_data = e.response.json()
+                        if "hafasCode" in error_data and error_data["hafasCode"] == "H9220":
+                            print('The route is too short')
+                            return {
+                                "info": {
+                                    "type": "no_stations",
+                                    "message": "No public transportation stations were found near these locations. Consider walking or using another transportation method."
+                                }
+                            }
+                    except:
+                        pass
+                
+                # Re-raise other errors
+                raise
             
         except Exception as e:
             print(f"Error fetching route data: {str(e)}")
@@ -300,7 +317,24 @@ class BvgProvider(BaseProvider):
                     # Count transfers (non-walking legs minus 1)
                     non_walking_legs = [leg for leg in legs if leg.type != "walking"]
                     transfers = max(0, len(non_walking_legs) - 1)
+                    # Departure time extra handling
+                    for i in range(len(legs) - 1):
+                        current_leg = legs[i]
+                        next_leg = legs[i + 1]
+                        
+                        if current_leg.type != "walking" and next_leg.type == "walking":
+                            time_diff = (next_leg.departure_time - current_leg.arrival_time).total_seconds() / 60
+                            
+                            arrival_departure_diff = (current_leg.arrival_time - current_leg.departure_time).total_seconds() / 60
+                            if time_diff < 5 or arrival_departure_diff < 3:
+                                realistic_arrival = next_leg.departure_time
+                                
+                                current_leg.arrival_time = realistic_arrival
                     
+                    if legs:
+                        departure_time = legs[0].departure_time
+                        arrival_time = legs[-1].arrival_time
+                        duration_minutes = int((arrival_time - departure_time).total_seconds() / 60)
                     # Create route
                     route = Route(
                         legs=legs,
@@ -310,7 +344,6 @@ class BvgProvider(BaseProvider):
                         departure_time=departure_time,
                         arrival_time=arrival_time
                     )
-                    
                     routes.append(route)
             
             except Exception as e:
@@ -358,7 +391,9 @@ class BvgProvider(BaseProvider):
                             alerts.append(warning)
                     
                     # Create step
-                    duration_min = int((leg.arrival_time - leg.departure_time).total_seconds() / 60)
+                    departure_time = leg.departure_time.replace(tzinfo=None)
+                    arrival_time = leg.arrival_time.replace(tzinfo=None)
+                    duration_min = int((arrival_time - departure_time).total_seconds() / 60)
                     
                     if leg.type == "walking":
                         steps.append(RouteStep(
@@ -401,7 +436,9 @@ class BvgProvider(BaseProvider):
                 # Generate summary
                 summary_parts = []
                 for leg in route.legs:
-                    duration_min = int((leg.arrival_time - leg.departure_time).total_seconds() / 60)
+                    departure_time = leg.departure_time.replace(tzinfo=None)
+                    arrival_time = leg.arrival_time.replace(tzinfo=None)
+                    duration_min = int((arrival_time - departure_time).total_seconds() / 60)
                     if leg.type == "walking":
                         summary_parts.append(f"Walk {duration_min} min")
                     else:
