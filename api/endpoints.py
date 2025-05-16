@@ -2,10 +2,9 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, Dict, Any
 import datetime
 
-from api.models import RouteResponse, PrettyRouteResponse
+from api.models import RouteResponse, PrettyRouteResponse, BikeResponse
 from providers.bvg import BvgProvider
-#from providers.voi import VoiProvider
-#from providers.tier import TierProvider
+from providers.nextbike import NextBikeProvider
 from utils.cache import get_cached_data, set_cached_data
 
 router = APIRouter()
@@ -216,5 +215,61 @@ async def get_pretty_routes(
         await set_cached_data(cache_key, routes_data)
         
         return routes_data
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching routes: {str(e)}")
+@router.get("/bikes/nearby", response_model=BikeResponse)
+async def get_nearby_bikes(
+    lat: Optional[float] = Query(None, description="Latitude"),
+    lon: Optional[float] = Query(None, description="Longitude"),
+    coords: Optional[str] = Query(None, description="Coordinates in format 'lat,lon'"),
+    radius: float = Query(500, description="Search radius in meters", ge=10, le=2000),
+    limit: int = Query(5, description="Maximum number of bikes to return", ge=1, le=20)
+):
+    """
+    Get nearby bikes from various providers
+    
+    Args:
+        lat: Latitude (alternative to coords)
+        lon: Longitude (alternative to coords)
+        coords: Coordinates in format 'lat,lon'
+        radius: Search radius in meters (default: 500m, max: 2000m)
+        limit: Maximum number of bikes to return (default: 5, max: 20)
+        
+    Returns:
+        List of nearby available bikes
+    """
+    try:
+        # Parse coordinates from combined format if provided
+        if coords:
+            try:
+                lat, lon = map(float, coords.split(','))
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid 'coords' format. Use 'lat,lon' format.")
+        
+        # Check that coordinates are provided in one of the formats
+        if lat is None or lon is None:
+            raise HTTPException(
+                status_code=400, 
+                detail="Coordinates must be provided either as separate parameters (lat, lon) or combined (coords)"
+            )
+        
+        # Try to get from cache
+        cache_key = f"nearby_bikes:{lat:.6f}:{lon:.6f}:{radius}:{limit}"
+        cached_result = await get_cached_data(cache_key)
+        if cached_result:
+            return cached_result
+        
+        # Initialize NextBike provider
+        nextbike_provider = NextBikeProvider()
+        
+        # Get bikes data
+        bikes = await nextbike_provider.get_vehicles(lat=lat, lon=lon, radius=radius, limit=limit)
+        
+        # Cache results
+        result = BikeResponse(bikes=bikes)
+        await set_cached_data(cache_key, result)
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching nearby bikes: {str(e)}")

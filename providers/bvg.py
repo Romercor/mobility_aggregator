@@ -202,7 +202,8 @@ class BvgProvider(BaseProvider):
                         line = None
                         direction = None
                         distance = leg.get("distance", 0)
-                        total_walking_distance += distance
+                        if distance is not None:
+                            total_walking_distance += distance
                     else:
                         line_info = leg.get("line", {})
                         product = line_info.get("product", "")
