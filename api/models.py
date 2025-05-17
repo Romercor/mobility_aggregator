@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel, Field
 
@@ -80,3 +80,35 @@ class BikeItem(BaseModel):
 class BikeResponse(BaseModel):
     """API response with bikes"""
     bikes: List[BikeItem]
+class PublicTransportStop(BaseModel):
+    """Model for a public transport stop (flattened structure)"""
+    type: str
+    id: str
+    name: str
+    latitude: float
+    longitude: float
+    products: Dict[str, bool]
+    distance: int
+    
+    # Optional fields
+    station: Optional[dict] = None
+    lines: Optional[List[dict]] = Field(default_factory=list)
+    
+    def get_coordinates(self) -> tuple:
+        """Returns the coordinates as a tuple"""
+        return (self.latitude, self.longitude)
+        
+    def get_formatted_name(self) -> str:
+        """Returns a formatted name with distance"""
+        return f"{self.name} ({self.distance}m)"
+    
+    def has_transport_type(self, transport_type: str) -> bool:
+        """Check if this stop has a specific transport type"""
+        if not self.products:
+            return False
+        return self.products.get(transport_type.lower(), False)
+
+class NearestStationResponse(BaseModel):
+    """API response with nearest stations"""
+    stops: List[PublicTransportStop]
+    message: Optional[str] = None

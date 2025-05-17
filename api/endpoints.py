@@ -2,10 +2,11 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, Dict, Any
 import datetime
 
-from api.models import RouteResponse, PrettyRouteResponse, BikeResponse
+from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from utils.cache import get_cached_data, set_cached_data
+from utils.station_finder import get_cached_nearest_stations
 
 router = APIRouter()
 
@@ -273,3 +274,56 @@ async def get_nearby_bikes(
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching nearby bikes: {str(e)}")
+    
+@router.get("/nearest-stations", response_model=NearestStationResponse)
+async def get_nearest_stations(
+    lat: Optional[float] = Query(None, description="Latitude"),
+    lon: Optional[float] = Query(None, description="Longitude"),
+    coords: Optional[str] = Query(None, description="Coordinates in format 'lat,lon'"),
+    results: int = Query(3, description="Maximum number of stations to return", ge=1, le=10),
+    transport_type: Optional[str] = Query(None, description="Filter by transport type (bus, subway, tram, suburban)")
+):
+    """
+    Get nearest public transport stations to a location
+    """
+    try:
+        # Initialize message
+        message = None
+        
+        if coords:
+            try:
+                parts = [part.strip() for part in coords.split(',')]
+                if len(parts) != 2:
+                    raise ValueError("Expected exactly two values")
+                lat, lon = map(float, parts)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid 'coords' format. Use 'lat,lon' format.")
+        
+        if lat is None or lon is None:
+            raise HTTPException(
+                status_code=400, 
+                detail="Coordinates must be provided either as separate parameters (lat, lon) or combined (coords)"
+            )
+        
+        stations = await get_cached_nearest_stations(lat, lon, results)
+        
+        if transport_type and stations:
+            filtered_stations = [
+                station for station in stations
+                if station.has_transport_type(transport_type)
+            ]
+            if filtered_stations:
+                stations = filtered_stations
+            else:
+                message = f"No {transport_type} stations found nearby. Showing all available stations."
+        
+        if stations:
+            return NearestStationResponse(stops=stations, message=message)
+        else:
+            return NearestStationResponse(
+                stops=[], 
+                message="No stations found nearby"
+            )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error finding stations: {str(e)}")
