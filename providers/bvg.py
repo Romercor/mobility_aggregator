@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from utils.geocoding import reverse_geocode
 from providers.base import BaseProvider
 from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep, Stopover
+
+MAX_ROUTE_DURATION_MINUTES = 30
 class BvgProvider(BaseProvider):
     """Provider for BVG public transport data"""
     
@@ -314,7 +316,9 @@ class BvgProvider(BaseProvider):
                     departure_time = legs[0].departure_time
                     arrival_time = legs[-1].arrival_time
                     duration_minutes = int((arrival_time - departure_time).total_seconds() / 60)
-                    
+                    if duration_minutes > MAX_ROUTE_DURATION_MINUTES:
+                        print(f"Skipping route with duration {duration_minutes} minutes (exceeds {MAX_ROUTE_DURATION_MINUTES} minute limit)")
+                        continue
                     # Count transfers (non-walking legs minus 1)
                     non_walking_legs = [leg for leg in legs if leg.type != "walking"]
                     transfers = max(0, len(non_walking_legs) - 1)
@@ -336,6 +340,9 @@ class BvgProvider(BaseProvider):
                         departure_time = legs[0].departure_time
                         arrival_time = legs[-1].arrival_time
                         duration_minutes = int((arrival_time - departure_time).total_seconds() / 60)
+                        if duration_minutes > MAX_ROUTE_DURATION_MINUTES:
+                            print(f"Skipping route with duration {duration_minutes} minutes (exceeds {MAX_ROUTE_DURATION_MINUTES} minute limit)")
+                            continue
                     # Create route
                     route = Route(
                         legs=legs,
