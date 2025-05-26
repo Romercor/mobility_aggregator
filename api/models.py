@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel, Field
+from datetime import datetime
 
 class RoutePoint(BaseModel):
     """Route point (stop or coordinates)"""
@@ -107,8 +108,30 @@ class PublicTransportStop(BaseModel):
         if not self.products:
             return False
         return self.products.get(transport_type.lower(), False)
-
 class NearestStationResponse(BaseModel):
     """API response with nearest stations"""
     stops: List[PublicTransportStop]
     message: Optional[str] = None
+
+class Dish(BaseModel):
+    """A dish in the menu"""
+    name: str
+    price: str
+    vegan: bool = False
+    vegetarian: bool = False
+
+class DayMenu(BaseModel):
+    """Menu for one day - groups as dict where key=group name, value=list of dishes"""
+    day_name: str
+    groups: Dict[str, List[Dish]]
+    is_available: bool = True
+
+class WeeklyMenu(BaseModel):
+    """Weekly menu for one mensa"""
+    mensa_name: str
+    days: List[DayMenu]
+    last_updated: datetime
+
+class MenuResponse(BaseModel):
+    """Simple response with menu data"""
+    menu: WeeklyMenu

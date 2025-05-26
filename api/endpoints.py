@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import datetime
 
 from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
@@ -7,6 +7,8 @@ from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from utils.cache import get_cached_data, set_cached_data
 from utils.station_finder import get_cached_nearest_stations
+from api.models import MenuResponse, WeeklyMenu
+from providers.mensa import MensaProvider
 
 router = APIRouter()
 
@@ -327,3 +329,126 @@ async def get_nearest_stations(
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error finding stations: {str(e)}")
+@router.get("/mensa/list")
+async def get_available_mensas() -> List[str]:
+    """
+    Get list of all available mensas
+    
+    Returns:
+        List of mensa names
+    """
+    try:
+        mensa_provider = MensaProvider()
+        mensas = mensa_provider.get_available_mensas()
+        return mensas
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching mensas: {str(e)}")
+
+@router.get("/mensa/{mensa_name}/menu", response_model=MenuResponse)
+async def get_mensa_menu(
+    mensa_name: str,
+    force_refresh: bool = Query(False, description="Force refresh cached data")
+):
+    """
+    Get weekly menu for a specific mensa
+    
+    Args:
+        mensa_name: Name of the mensa (hardenbergstrasse, marchstrasse, veggie)
+        force_refresh: Force refresh cache
+    
+    Returns:
+        Weekly menu for the specified mensa
+    """
+    try:
+        mensa_provider = MensaProvider()
+        
+        # Check if mensa exists
+        available_mensas = mensa_provider.get_available_mensas()
+        if mensa_name not in available_mensas:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Mensa '{mensa_name}' not found. Available: {available_mensas}"
+            )
+        
+        # Get menu
+        menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
+        if not menu:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Menu not available for mensa '{mensa_name}'"
+            )
+        
+        return MenuResponse(menu=menu)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching menu: {str(e)}")
+
+@router.get("/mensa/all-menus")
+async def get_all_menus(
+    force_refresh: bool = Query(False, description="Force refresh cached data")
+) -> Dict[str, WeeklyMenu]:
+    """
+    Get menus for all mensas
+    
+    Args:
+        force_refresh: Force refresh cache
+    
+    Returns:
+        Dictionary with menus for all mensas
+    """
+    try:
+        mensa_provider = MensaProvider()
+        available_mensas = mensa_provider.get_available_mensas()
+        
+        all_menus = {}
+        for mensa_name in available_mensas:
+            try:
+                menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
+                if menu:
+                    all_menus[mensa_name] = menu
+            except Exception as e:
+                print(f"Failed to get menu for {mensa_name}: {str(e)}")
+                continue
+        
+        return all_menus
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching all menus: {str(e)}")
+
+@router.post("/mensa/refresh")
+async def refresh_all_menus():
+    """
+    Force refresh all mensa menus
+    
+    Useful for scheduled updates
+    """
+    try:
+        mensa_provider = MensaProvider()
+        available_mensas = mensa_provider.get_available_mensas()
+        
+        updated_menus = []
+        failed_menus = []
+        
+        for mensa_name in available_mensas:
+            try:
+                menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh=True)
+                if menu:
+                    updated_menus.append(mensa_name)
+                else:
+                    failed_menus.append(mensa_name)
+            except Exception as e:
+                print(f"Failed to refresh {mensa_name}: {str(e)}")
+                failed_menus.append(mensa_name)
+        
+        return {
+            "status": "completed",
+            "updated": len(updated_menus),
+            "failed": len(failed_menus),
+            "updated_mensas": updated_menus,
+            "failed_mensas": failed_menus
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error refreshing menus: {str(e)}")

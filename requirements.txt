@@ -2,3 +2,5 @@ fastapi>=0.103.0
 uvicorn>=0.22.0
 httpx>=0.24.1
 pydantic>=2.3.0
+playwright>=1.40.0
+beautifulsoup4>=4.12.0
