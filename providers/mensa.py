@@ -41,14 +41,7 @@ class MensaProvider(BaseProvider):
     
     async def get_weekly_menu(self, mensa_name: str, force_refresh: bool = False) -> Optional[WeeklyMenu]:
         """
-        Get weekly menu for a specific mensa using unified caching
-        
-        Args:
-            mensa_name: Name of the mensa
-            force_refresh: Force refresh cached data
-            
-        Returns:
-            WeeklyMenu object or None if not available
+        Get weekly menu for a specific mensa with smart refresh logic
         """
         if mensa_name not in self.MENSAS:
             return None
@@ -57,25 +50,29 @@ class MensaProvider(BaseProvider):
         cache_key = f"mensa_menu:{mensa_name}"
         if not force_refresh:
             cached_menu = await mensa_cache.get(cache_key)
-            if cached_menu:
+            if cached_menu:  # Cache exists
                 try:
-                    return WeeklyMenu(**cached_menu)
+                    # Smart refresh check
+                    if not self._should_refresh_menu(cached_menu):
+                        return WeeklyMenu(**cached_menu)
+                    else:
+                        print(f"Smart refresh triggered for {mensa_name}")
                 except Exception as e:
-                    print(f"Error deserializing cached menu for {mensa_name}: {str(e)}")
-                    # If deserialization fails, proceed to fetch fresh data
+                    print(f"Error with cached menu for {mensa_name}: {str(e)}")
+            else:
+                print(f"No cached data for {mensa_name}, will scrape fresh data")
         
-        # Scrape fresh data
+        # Scrape fresh data (empty cache, force refresh, or smart refresh triggered)
         mensa_config = self.MENSAS[mensa_name]
         try:
             menu_data = await self._scrape_weekly_menu(mensa_config["url"])
             weekly_menu = self._parse_menu_data(mensa_config["name"], menu_data)
             
-            # Cache the result using unified cache
+            # Cache the result
             try:
                 await mensa_cache.set(cache_key, weekly_menu.model_dump())
             except Exception as e:
                 print(f"Error caching menu for {mensa_name}: {str(e)}")
-                # Continue even if caching fails
             
             return weekly_menu
             
@@ -190,3 +187,36 @@ class MensaProvider(BaseProvider):
             days=days,
             last_updated=datetime.now()
         )
+    def _should_refresh_menu(self, cached_menu_data: dict) -> bool:
+        """
+        Simple logic to decide if menu should be refreshed
+        """
+        try:
+            from datetime import datetime, timedelta
+            
+            # Handle both datetime object and string
+            last_updated_raw = cached_menu_data["last_updated"]
+            if isinstance(last_updated_raw, str):
+                last_updated = datetime.fromisoformat(last_updated_raw)
+            else:
+                last_updated = last_updated_raw  # Already a datetime object
+            
+            now = datetime.now()
+            
+            # Rule 1: If older than 7 days, always refresh
+            if (now - last_updated).days >= 7:
+                print(f"Menu is {(now - last_updated).days} days old, refreshing...")
+                return True
+            
+            # Rule 2: Monday morning refresh (6am+) if data is from previous week
+            if (now.weekday() == 0 and  # Monday
+                now.hour >= 6 and       # After 6 AM
+                last_updated.isocalendar()[1] < now.isocalendar()[1]):  # Previous week
+                print("Monday morning refresh: data is from previous week")
+                return True
+                
+            return False
+            
+        except Exception as e:
+            print(f"Error checking refresh condition: {e}")
+            return True
