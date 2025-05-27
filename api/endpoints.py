@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Query, HTTPException
+from fastapi.responses import JSONResponse
 from typing import Optional, Dict, Any, List
 import datetime
-
+import httpx
 from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
@@ -10,6 +11,45 @@ from providers.mensa import MensaProvider
 from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup_all_caches
 
 router = APIRouter()
+@router.get("/health")
+async def health_check():
+    """Enhanced health check"""
+    status = "ok"
+    checks = []
+    
+    # Check cache
+    try:
+        await api_cache.set("health_test", True)
+        await api_cache.get("health_test")
+        checks.append("cache: ✓")
+    except:
+        checks.append("cache: ✗")
+        status = "degraded"
+    
+    # Check APIs (2s timeout)
+    async def check(url):
+        try:
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                r = await client.head(url)
+                return r.status_code < 500
+        except:
+            return False
+    
+    if await check("https://v6.bvg.transport.rest"):
+        checks.append("bvg: ✓")
+    else:
+        checks.append("bvg: ✗")
+        status = "unhealthy"
+    
+    if await check("https://api.nextbike.net/maps/nextbike-live.json"):
+        checks.append("bikes: ✓")
+    else:
+        checks.append("bikes: ✗")
+    
+    return {
+        "status": status,
+        "checks": checks
+    }
 
 @router.get("/raw-routes")
 async def get_routes(

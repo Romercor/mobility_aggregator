@@ -19,12 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Health check endpoint
-@app.get("/api/health")
-async def health_check():
-    """Simple health check endpoint"""
-    return {"status": "ok"}
-
 # Include API routes
 app.include_router(api_router, prefix="/api")
 
