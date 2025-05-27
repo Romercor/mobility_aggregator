@@ -2,6 +2,7 @@
 from typing import Optional, List, Dict, Any
 import httpx
 from api.models import PublicTransportStop
+from .cache import transport_cache
 
 async def find_nearest_stations(
     lat: float, 
@@ -88,9 +89,6 @@ async def find_nearest_stations(
         if close_client and client:
             await client.aclose()
 
-# Cache for station search results
-_station_cache: Dict[str, List[PublicTransportStop]] = {}
-
 async def get_cached_nearest_stations(
     lat: float, 
     lon: float, 
@@ -98,7 +96,7 @@ async def get_cached_nearest_stations(
     force_refresh: bool = False
 ) -> List[PublicTransportStop]:
     """
-    Get nearest stations with caching
+    Get nearest stations with unified caching
     
     Args:
         lat: Latitude
@@ -110,15 +108,28 @@ async def get_cached_nearest_stations(
         List of nearest stations
     """
     # Use 4 decimal precision for cache key (about 11m precision)
-    cache_key = f"{lat:.4f}:{lon:.4f}:{max_results}"
+    cache_key = f"stations:{lat:.4f}:{lon:.4f}:{max_results}"
     
-    if not force_refresh and cache_key in _station_cache:
-        return _station_cache[cache_key]
+    if not force_refresh:
+        cached_stations = await transport_cache.get(cache_key)
+        if cached_stations:
+            try:
+                # Convert back to PublicTransportStop objects
+                return [PublicTransportStop(**stop_data) for stop_data in cached_stations]
+            except Exception as e:
+                print(f"Error deserializing cached stations: {str(e)}")
+                # If deserialization fails, proceed to fetch fresh data
     
     # Get fresh data
     stations = await find_nearest_stations(lat, lon, max_results)
     
-    # Update cache
-    _station_cache[cache_key] = stations
+    # Cache as serializable data
+    if stations:
+        try:
+            serializable_stations = [station.model_dump() for station in stations]
+            await transport_cache.set(cache_key, serializable_stations)
+        except Exception as e:
+            print(f"Error caching stations: {str(e)}")
+            # Continue even if caching fails
     
     return stations

@@ -4,9 +4,7 @@ Geocoding utilities for TU Berlin campus locations
 import httpx
 import math
 from typing import Dict, Any, Optional
-
-# In-memory cache for geocoding results
-_geocode_cache = {}
+from .cache import geocoding_cache
 
 # List of streets that should never appear in results for TU Berlin campus
 DISALLOWED_STREETS = [
@@ -124,9 +122,12 @@ async def reverse_geocode(lat: float, lon: float) -> str:
         User-friendly location name
     """
     # Generate cache key with full precision
-    cache_key = f"{lat},{lon}"
-    if cache_key in _geocode_cache:
-        return _geocode_cache[cache_key]
+    cache_key = f"geocode:{lat},{lon}"
+    
+    # Try to get from unified cache
+    cached_result = await geocoding_cache.get(cache_key)
+    if cached_result:
+        return cached_result
     
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -161,25 +162,38 @@ async def reverse_geocode(lat: float, lon: float) -> str:
                 
                 # Check if the result is too far from the input coordinates
                 if distance > MAX_DISTANCE:
-                    return f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                    fallback_name = f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                    await geocoding_cache.set(cache_key, fallback_name)
+                    return fallback_name
 
                 # Check for disallowed streets in address
                 if "address" in data and "road" in data["address"] and data["address"]["road"]:
                     road = data["address"]["road"].lower()
                     if any(street in road for street in DISALLOWED_STREETS):
-                        return f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                        fallback_name = f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                        await geocoding_cache.set(cache_key, fallback_name)
+                        return fallback_name
                 
                 location_name = get_best_location_name(data)
                 
                 # Final check to ensure no disallowed streets in the result
                 if location_name and any(street in location_name.lower() for street in DISALLOWED_STREETS):
-                    return f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                    fallback_name = f"TU Berlin Campus ({lat:.5f}, {lon:.5f})"
+                    await geocoding_cache.set(cache_key, fallback_name)
+                    return fallback_name
                 
-                _geocode_cache[cache_key] = location_name
+                # Cache successful result
+                await geocoding_cache.set(cache_key, location_name)
                 return location_name
             
-            return f"Location ({lat}, {lon})"
+            # Cache HTTP error responses
+            fallback_name = f"Location ({lat}, {lon})"
+            await geocoding_cache.set(cache_key, fallback_name)
+            return fallback_name
             
     except Exception as e:
         print(f"Geocoding error: {str(e)}")
-        return f"Location ({lat}, {lon})"
+        # Cache error results briefly to avoid repeated failed requests
+        fallback_name = f"Location ({lat}, {lon})"
+        await geocoding_cache.set(cache_key, fallback_name)
+        return fallback_name

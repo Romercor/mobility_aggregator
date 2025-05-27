@@ -5,9 +5,9 @@ import datetime
 from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
-from utils.cache import get_cached_data, set_cached_data
 from api.models import MenuResponse, WeeklyMenu
 from providers.mensa import MensaProvider
+from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup_all_caches
 
 router = APIRouter()
 
@@ -107,11 +107,16 @@ async def get_routes(
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid departure time format. Use ISO format (e.g. 2025-05-05T11:09:00+02:00)")
         
-        # Try to get from cache
+        # Try to get from unified cache
         cache_key = f"parsed_routes:{from_lat:.6f}:{from_lon:.6f}:{to_lat:.6f}:{to_lon:.6f}:{departure}:{results}:{stopovers}"
-        cached_result = await get_cached_data(cache_key)
+        cached_result = await api_cache.get(cache_key)
         if cached_result:
-            return cached_result
+            try:
+                # Convert back to RouteResponse object
+                return RouteResponse(**cached_result)
+            except Exception as e:
+                print(f"Error deserializing cached routes: {str(e)}")
+                # If deserialization fails, proceed to fetch fresh data
         
         # Get parsed route data
         async with BvgProvider() as bvg_provider:
@@ -125,8 +130,12 @@ async def get_routes(
                 include_stopovers=stopovers
             )
         
-        # Cache the results
-        await set_cached_data(cache_key, routes_data)
+        # Cache the results as serializable data
+        try:
+            await api_cache.set(cache_key, routes_data.model_dump())
+        except Exception as e:
+            print(f"Error caching routes: {str(e)}")
+            # Continue even if caching fails
         
         return routes_data
     except Exception as e:
@@ -190,11 +199,16 @@ async def get_pretty_routes(
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid departure time format. Use ISO format (e.g. 2025-05-05T11:09:00+02:00)")
         
-        # Try to get from cache
+        # Try to get from unified cache
         cache_key = f"pretty_routes:{from_lat:.6f}:{from_lon:.6f}:{to_lat:.6f}:{to_lon:.6f}:{departure}:{results}:{stopovers}"
-        cached_result = await get_cached_data(cache_key)
+        cached_result = await api_cache.get(cache_key)
         if cached_result:
-            return cached_result
+            try:
+                # Convert back to PrettyRouteResponse object
+                return PrettyRouteResponse(**cached_result)
+            except Exception as e:
+                print(f"Error deserializing cached pretty routes: {str(e)}")
+                # If deserialization fails, proceed to fetch fresh data
         
         # Get pretty route data
         async with BvgProvider() as bvg_provider:
@@ -208,8 +222,12 @@ async def get_pretty_routes(
                 include_stopovers=stopovers
             )
         
-        # Cache the results
-        await set_cached_data(cache_key, routes_data)
+        # Cache the results as serializable data
+        try:
+            await api_cache.set(cache_key, routes_data.model_dump())
+        except Exception as e:
+            print(f"Error caching pretty routes: {str(e)}")
+            # Continue even if caching fails
         
         return routes_data
     
@@ -252,19 +270,28 @@ async def get_nearby_bikes(
                 detail="Coordinates must be provided either as separate parameters (lat, lon) or combined (coords)"
             )
         
-        # Try to get from cache
+        # Try to get from transport cache (short TTL for dynamic data)
         cache_key = f"nearby_bikes:{lat:.6f}:{lon:.6f}:{radius}:{limit}"
-        cached_result = await get_cached_data(cache_key)
+        cached_result = await transport_cache.get(cache_key)
         if cached_result:
-            return cached_result
+            try:
+                # Convert back to BikeResponse object
+                return BikeResponse(**cached_result)
+            except Exception as e:
+                print(f"Error deserializing cached bikes: {str(e)}")
+                # If deserialization fails, proceed to fetch fresh data
         
         # Get bikes data
         async with NextBikeProvider() as nextbike_provider:
             bikes = await nextbike_provider.get_vehicles(lat=lat, lon=lon, radius=radius, limit=limit)
         
-        # Cache results
+        # Cache results as serializable data
         result = BikeResponse(bikes=bikes)
-        await set_cached_data(cache_key, result)
+        try:
+            await transport_cache.set(cache_key, result.model_dump())
+        except Exception as e:
+            print(f"Error caching bikes: {str(e)}")
+            # Continue even if caching fails
         
         return result
     except Exception as e:
@@ -447,3 +474,86 @@ async def refresh_all_menus():
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error refreshing menus: {str(e)}")
+
+# ================================
+# CACHE MONITORING ENDPOINTS
+# ================================
+
+@router.get("/cache/stats")
+async def get_cache_statistics():
+    """
+    Get statistics for all cache instances
+    
+    Returns:
+        Detailed statistics for each cache type including hit rates and memory usage
+    """
+    try:
+        stats = get_all_cache_stats()
+        total_entries = sum(cache["size"] for cache in stats.values())
+        total_memory_kb = sum(cache["memory_usage_estimate_kb"] for cache in stats.values())
+        
+        return {
+            "cache_statistics": stats,
+            "summary": {
+                "total_entries": total_entries,
+                "total_memory_usage_kb": round(total_memory_kb, 2),
+                "total_memory_usage_mb": round(total_memory_kb / 1024, 2),
+                "cache_types": len(stats),
+                "avg_hit_rate": round(
+                    sum(cache["hit_rate_percent"] for cache in stats.values()) / len(stats), 2
+                ) if stats else 0
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting cache stats: {str(e)}")
+
+@router.post("/cache/cleanup")
+async def cleanup_expired_cache():
+    """
+    Manually trigger cleanup of expired cache entries
+    
+    Returns:
+        Number of entries removed from each cache
+    """
+    try:
+        cleanup_results = await cleanup_all_caches()
+        total_cleaned = sum(cleanup_results.values())
+        
+        return {
+            "status": "completed",
+            "total_entries_removed": total_cleaned,
+            "cleanup_by_cache": cleanup_results,
+            "message": f"Successfully cleaned {total_cleaned} expired entries"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error cleaning cache: {str(e)}")
+
+@router.delete("/cache/clear")
+async def clear_all_caches():
+    """
+    Clear all cache entries (use with caution)
+    
+    Returns:
+        Confirmation of cache clearing
+    """
+    try:
+        from utils.cache import api_cache, geocoding_cache, transport_cache, mensa_cache
+        
+        # Get sizes before clearing
+        stats_before = get_all_cache_stats()
+        total_before = sum(cache["size"] for cache in stats_before.values())
+        
+        # Clear all caches
+        await api_cache.clear()
+        await geocoding_cache.clear()
+        await transport_cache.clear()
+        await mensa_cache.clear()
+        
+        return {
+            "status": "completed",
+            "entries_removed": total_before,
+            "message": f"All caches cleared. Removed {total_before} entries total.",
+            "warning": "Cache performance may be slower until new data is cached"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error clearing caches: {str(e)}")

@@ -6,7 +6,7 @@ import concurrent.futures
 
 from providers.base import BaseProvider
 from api.models import WeeklyMenu, DayMenu, Dish
-from utils.cache import get_cached_data, set_cached_data
+from utils.cache import mensa_cache
 
 class MensaProvider(BaseProvider):
     """Provider for TU Berlin mensa menus"""
@@ -33,7 +33,7 @@ class MensaProvider(BaseProvider):
     
     def __init__(self):
         super().__init__()
-        self.cache_ttl = 3600  # 1 hour cache
+        self.cache_ttl = 3600  # 1 hour cache (kept for reference, actual TTL is in unified cache)
     
     def get_available_mensas(self) -> List[str]:
         """Get list of available mensa names"""
@@ -41,17 +41,28 @@ class MensaProvider(BaseProvider):
     
     async def get_weekly_menu(self, mensa_name: str, force_refresh: bool = False) -> Optional[WeeklyMenu]:
         """
-        Get weekly menu for a specific mensa
+        Get weekly menu for a specific mensa using unified caching
+        
+        Args:
+            mensa_name: Name of the mensa
+            force_refresh: Force refresh cached data
+            
+        Returns:
+            WeeklyMenu object or None if not available
         """
         if mensa_name not in self.MENSAS:
             return None
         
-        # Check cache first
+        # Check unified cache first
         cache_key = f"mensa_menu:{mensa_name}"
         if not force_refresh:
-            cached_menu = await get_cached_data(cache_key)
+            cached_menu = await mensa_cache.get(cache_key)
             if cached_menu:
-                return WeeklyMenu(**cached_menu)
+                try:
+                    return WeeklyMenu(**cached_menu)
+                except Exception as e:
+                    print(f"Error deserializing cached menu for {mensa_name}: {str(e)}")
+                    # If deserialization fails, proceed to fetch fresh data
         
         # Scrape fresh data
         mensa_config = self.MENSAS[mensa_name]
@@ -59,8 +70,13 @@ class MensaProvider(BaseProvider):
             menu_data = await self._scrape_weekly_menu(mensa_config["url"])
             weekly_menu = self._parse_menu_data(mensa_config["name"], menu_data)
             
-            # Cache the result
-            await set_cached_data(cache_key, weekly_menu.model_dump())
+            # Cache the result using unified cache
+            try:
+                await mensa_cache.set(cache_key, weekly_menu.model_dump())
+            except Exception as e:
+                print(f"Error caching menu for {mensa_name}: {str(e)}")
+                # Continue even if caching fails
+            
             return weekly_menu
             
         except Exception as e:
