@@ -6,7 +6,6 @@ from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, Nearest
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from utils.cache import get_cached_data, set_cached_data
-from utils.station_finder import get_cached_nearest_stations
 from api.models import MenuResponse, WeeklyMenu
 from providers.mensa import MensaProvider
 
@@ -34,19 +33,17 @@ async def get_routes(
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid departure time format. Use ISO format (e.g. 2025-05-04T21:41:00+02:00)")
         
-        # Initialize BVG provider
-        bvg_provider = BvgProvider()
-        
         # Get route data
-        routes_data = await bvg_provider.get_routes(
-            from_lat=from_lat,
-            from_lon=from_lon,
-            to_lat=to_lat,
-            to_lon=to_lon,
-            departure_time=departure_time,
-            max_results=results,
-            include_stopovers=stopovers
-        )
+        async with BvgProvider() as bvg_provider:
+            routes_data = await bvg_provider.get_routes(
+                from_lat=from_lat,
+                from_lon=from_lon,
+                to_lat=to_lat,
+                to_lon=to_lon,
+                departure_time=departure_time,
+                max_results=results,
+                include_stopovers=stopovers
+            )
         
         return routes_data
     except Exception as e:
@@ -116,19 +113,17 @@ async def get_routes(
         if cached_result:
             return cached_result
         
-        # Initialize BVG provider
-        bvg_provider = BvgProvider()
-        
         # Get parsed route data
-        routes_data = await bvg_provider.get_parsed_routes(
-            from_lat=from_lat,
-            from_lon=from_lon,
-            to_lat=to_lat,
-            to_lon=to_lon,
-            departure_time=departure_time,
-            max_results=results,
-            include_stopovers=stopovers
-        )
+        async with BvgProvider() as bvg_provider:
+            routes_data = await bvg_provider.get_parsed_routes(
+                from_lat=from_lat,
+                from_lon=from_lon,
+                to_lat=to_lat,
+                to_lon=to_lon,
+                departure_time=departure_time,
+                max_results=results,
+                include_stopovers=stopovers
+            )
         
         # Cache the results
         await set_cached_data(cache_key, routes_data)
@@ -136,6 +131,7 @@ async def get_routes(
         return routes_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching routes: {str(e)}")
+
 @router.get("/pretty-routes", response_model=PrettyRouteResponse)
 async def get_pretty_routes(
     from_lat: Optional[float] = Query(None, description="Starting point latitude"),
@@ -200,19 +196,17 @@ async def get_pretty_routes(
         if cached_result:
             return cached_result
         
-        # Initialize BVG provider
-        bvg_provider = BvgProvider()
-        
         # Get pretty route data
-        routes_data = await bvg_provider.get_pretty_routes(
-            from_lat=from_lat,
-            from_lon=from_lon,
-            to_lat=to_lat,
-            to_lon=to_lon,
-            departure_time=departure_time,
-            max_results=results,
-            include_stopovers=stopovers
-        )
+        async with BvgProvider() as bvg_provider:
+            routes_data = await bvg_provider.get_pretty_routes(
+                from_lat=from_lat,
+                from_lon=from_lon,
+                to_lat=to_lat,
+                to_lon=to_lon,
+                departure_time=departure_time,
+                max_results=results,
+                include_stopovers=stopovers
+            )
         
         # Cache the results
         await set_cached_data(cache_key, routes_data)
@@ -221,6 +215,7 @@ async def get_pretty_routes(
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching routes: {str(e)}")
+
 @router.get("/bikes/nearby", response_model=BikeResponse)
 async def get_nearby_bikes(
     lat: Optional[float] = Query(None, description="Latitude"),
@@ -263,11 +258,9 @@ async def get_nearby_bikes(
         if cached_result:
             return cached_result
         
-        # Initialize NextBike provider
-        nextbike_provider = NextBikeProvider()
-        
         # Get bikes data
-        bikes = await nextbike_provider.get_vehicles(lat=lat, lon=lon, radius=radius, limit=limit)
+        async with NextBikeProvider() as nextbike_provider:
+            bikes = await nextbike_provider.get_vehicles(lat=lat, lon=lon, radius=radius, limit=limit)
         
         # Cache results
         result = BikeResponse(bikes=bikes)
@@ -307,7 +300,9 @@ async def get_nearest_stations(
                 detail="Coordinates must be provided either as separate parameters (lat, lon) or combined (coords)"
             )
         
-        stations = await get_cached_nearest_stations(lat, lon, results)
+        # Use BvgProvider's method which already returns PublicTransportStop objects
+        async with BvgProvider() as bvg_provider:
+            stations = await bvg_provider.get_nearest_stations_simple(lat, lon, results)
         
         if transport_type and stations:
             filtered_stations = [
@@ -329,6 +324,7 @@ async def get_nearest_stations(
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error finding stations: {str(e)}")
+
 @router.get("/mensa/list")
 async def get_available_mensas() -> List[str]:
     """
@@ -338,8 +334,8 @@ async def get_available_mensas() -> List[str]:
         List of mensa names
     """
     try:
-        mensa_provider = MensaProvider()
-        mensas = mensa_provider.get_available_mensas()
+        async with MensaProvider() as mensa_provider:
+            mensas = mensa_provider.get_available_mensas()
         return mensas
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching mensas: {str(e)}")
@@ -360,25 +356,24 @@ async def get_mensa_menu(
         Weekly menu for the specified mensa
     """
     try:
-        mensa_provider = MensaProvider()
-        
-        # Check if mensa exists
-        available_mensas = mensa_provider.get_available_mensas()
-        if mensa_name not in available_mensas:
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Mensa '{mensa_name}' not found. Available: {available_mensas}"
-            )
-        
-        # Get menu
-        menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
-        if not menu:
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Menu not available for mensa '{mensa_name}'"
-            )
-        
-        return MenuResponse(menu=menu)
+        async with MensaProvider() as mensa_provider:
+            # Check if mensa exists
+            available_mensas = mensa_provider.get_available_mensas()
+            if mensa_name not in available_mensas:
+                raise HTTPException(
+                    status_code=404, 
+                    detail=f"Mensa '{mensa_name}' not found. Available: {available_mensas}"
+                )
+            
+            # Get menu
+            menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
+            if not menu:
+                raise HTTPException(
+                    status_code=404, 
+                    detail=f"Menu not available for mensa '{mensa_name}'"
+                )
+            
+            return MenuResponse(menu=menu)
         
     except HTTPException:
         raise
@@ -399,20 +394,20 @@ async def get_all_menus(
         Dictionary with menus for all mensas
     """
     try:
-        mensa_provider = MensaProvider()
-        available_mensas = mensa_provider.get_available_mensas()
-        
-        all_menus = {}
-        for mensa_name in available_mensas:
-            try:
-                menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
-                if menu:
-                    all_menus[mensa_name] = menu
-            except Exception as e:
-                print(f"Failed to get menu for {mensa_name}: {str(e)}")
-                continue
-        
-        return all_menus
+        async with MensaProvider() as mensa_provider:
+            available_mensas = mensa_provider.get_available_mensas()
+            
+            all_menus = {}
+            for mensa_name in available_mensas:
+                try:
+                    menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh)
+                    if menu:
+                        all_menus[mensa_name] = menu
+                except Exception as e:
+                    print(f"Failed to get menu for {mensa_name}: {str(e)}")
+                    continue
+            
+            return all_menus
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching all menus: {str(e)}")
@@ -425,22 +420,22 @@ async def refresh_all_menus():
     Useful for scheduled updates
     """
     try:
-        mensa_provider = MensaProvider()
-        available_mensas = mensa_provider.get_available_mensas()
-        
-        updated_menus = []
-        failed_menus = []
-        
-        for mensa_name in available_mensas:
-            try:
-                menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh=True)
-                if menu:
-                    updated_menus.append(mensa_name)
-                else:
+        async with MensaProvider() as mensa_provider:
+            available_mensas = mensa_provider.get_available_mensas()
+            
+            updated_menus = []
+            failed_menus = []
+            
+            for mensa_name in available_mensas:
+                try:
+                    menu = await mensa_provider.get_weekly_menu(mensa_name, force_refresh=True)
+                    if menu:
+                        updated_menus.append(mensa_name)
+                    else:
+                        failed_menus.append(mensa_name)
+                except Exception as e:
+                    print(f"Failed to refresh {mensa_name}: {str(e)}")
                     failed_menus.append(mensa_name)
-            except Exception as e:
-                print(f"Failed to refresh {mensa_name}: {str(e)}")
-                failed_menus.append(mensa_name)
         
         return {
             "status": "completed",

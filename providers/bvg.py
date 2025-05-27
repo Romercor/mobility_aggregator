@@ -482,3 +482,7 @@ class BvgProvider(BaseProvider):
             import traceback
             traceback.print_exc()
             return PrettyRouteResponse(routes=[])
+    async def get_nearest_stations_simple(self, lat: float, lon: float, max_results: int = 3):
+        """Wrapper for station finder using existing client"""
+        from utils.station_finder import find_nearest_stations
+        return await find_nearest_stations(lat, lon, max_results, self.client)
