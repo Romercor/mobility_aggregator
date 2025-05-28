@@ -1,13 +1,13 @@
-# Use Python with Playwright pre-installed
-FROM mcr.microsoft.com/playwright/python:v1.40.0-focal
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# System dependencies für Playwright
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
-# Install Playwright browsers (only Chromium for smaller size)
-RUN playwright install chromium
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && \
+    playwright install chromium --with-deps
 
 COPY . .
 
