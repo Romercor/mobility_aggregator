@@ -147,3 +147,9 @@ class WeatherResponse(BaseModel):
     weather: Weather
     location: str
     coordinates: Dict[str, float]
+
+class RoomEvent(BaseModel):
+    title: Optional[str] = None
+    datetime: Optional[str] = None
+    room: Optional[str] = None
+    lecturer: Optional[str] = None

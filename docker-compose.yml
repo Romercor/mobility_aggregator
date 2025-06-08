@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  tubify-route-aggregator:
+    container_name:  tubify-mobility-aggregator
+    image:  tubify-mobility-aggregator
+    ports:
+      - "5550:8080"
+    networks:
+      - tubify-net
+networks:
+  tubify-net:
+    external: true

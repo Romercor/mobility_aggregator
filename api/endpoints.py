@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List
 import datetime
 import httpx
 from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
+from providers.RoomSchedule import get_room_schedule
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from api.models import MenuResponse, WeeklyMenu
@@ -11,6 +12,7 @@ from providers.mensa import MensaProvider
 from api.models import WeatherResponse
 from providers.weather import WeatherProvider
 from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup_all_caches
+from api.models import RoomEvent
 
 router = APIRouter()
 @router.get("/health")
@@ -654,3 +656,17 @@ async def get_current_weather(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching weather: {str(e)}")
+
+
+@router.get("/room_schedule", response_model=List[RoomEvent])
+async def room_schedule(
+    room_number: str = Query(..., description="Номер аудитории"),
+    date: str = Query(..., description="Дата в формате YYYY-MM-DD")
+):
+    import asyncio
+    loop = asyncio.get_event_loop()
+    try:
+        events = await loop.run_in_executor(None, get_room_schedule, room_number, date)
+        return events
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
