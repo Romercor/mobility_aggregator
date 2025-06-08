@@ -5,7 +5,8 @@ import sys
 if sys.platform.startswith('win'):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
-
+from dotenv import load_dotenv
+load_dotenv()
 from api.endpoints import router as api_router
 
 app = FastAPI(title="Mobility Aggregator API")

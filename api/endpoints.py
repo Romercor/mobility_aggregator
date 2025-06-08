@@ -8,6 +8,8 @@ from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from api.models import MenuResponse, WeeklyMenu
 from providers.mensa import MensaProvider
+from api.models import WeatherResponse
+from providers.weather import WeatherProvider
 from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup_all_caches
 
 router = APIRouter()
@@ -597,3 +599,58 @@ async def clear_all_caches():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error clearing caches: {str(e)}")
+    
+@router.get("/weather", response_model=WeatherResponse)
+async def get_current_weather(
+    lat: Optional[float] = Query(None, description="Latitude"),
+    lon: Optional[float] = Query(None, description="Longitude"),
+    coords: Optional[str] = Query(None, description="Coordinates in format 'lat,lon'")
+):
+    """
+    Get current weather data (temperature, description, icon, air quality)
+    
+    Args:
+        lat: Latitude (alternative to coords)
+        lon: Longitude (alternative to coords)
+        coords: Coordinates in format 'lat,lon'
+        
+    Returns:
+        Weather data with temperature, description, icon URL, and air quality index
+        
+    Note:
+        If no coordinates provided, returns weather for TU Berlin campus
+    """
+    try:
+        # Parse coordinates from combined format if provided
+        if coords:
+            try:
+                lat, lon = map(float, coords.split(','))
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid 'coords' format. Use 'lat,lon' format.")
+        
+        # Get weather data
+        async with WeatherProvider() as weather_provider:
+            weather = await weather_provider.get_weather(lat=lat, lon=lon)
+        
+        if not weather:
+            raise HTTPException(status_code=503, detail="Weather data currently unavailable")
+        
+        # Determine location name
+        location_name = "TU Berlin Campus"
+        if lat and lon:
+            if lat != WeatherProvider.DEFAULT_LAT or lon != WeatherProvider.DEFAULT_LON:
+                location_name = f"Location ({lat:.4f}, {lon:.4f})"
+        
+        return WeatherResponse(
+            weather=weather,
+            location=location_name,
+            coordinates={
+                "lat": lat or WeatherProvider.DEFAULT_LAT,
+                "lon": lon or WeatherProvider.DEFAULT_LON
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching weather: {str(e)}")

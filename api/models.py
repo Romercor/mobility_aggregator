@@ -135,3 +135,15 @@ class WeeklyMenu(BaseModel):
 class MenuResponse(BaseModel):
     """Simple response with menu data"""
     menu: WeeklyMenu
+class Weather(BaseModel):
+    """Weather data"""
+    temperature: float
+    description: str
+    icon_url: str      
+    air_quality_index: int  # 1-5 (1=Good, 5=Very Poor)
+
+class WeatherResponse(BaseModel):
+    """API response with weather data"""
+    weather: Weather
+    location: str
+    coordinates: Dict[str, float]

@@ -1,14 +1,19 @@
 ================================================================================
                         TU BERLIN CAMPUS ROUTER API
-                              Version 1.0
+                              Version 1.1
 ================================================================================
 
 INSTALLATION
 ------------
 1. Install Docker Desktop: https://docker.com
-2. Load image: docker load < tu-router.tar  
-3. Start service: docker run -d -p 8000:8000 --name campus tu-router
-4. Access API: http://localhost:8000/docs
+2. Get free OpenWeatherMap API key: https://openweathermap.org/api
+3. Load image: docker load < tu-router.tar  
+4. Start with API key: docker run -d -p 8000:8000 -e OPENWEATHER_API_KEY="your_key_here" --name campus tu-router
+5. Access API: http://localhost:8000/docs
+
+Alternative: Use .env file
+echo "OPENWEATHER_API_KEY=your_key_here" > .env
+docker run -d -p 8000:8000 --env-file .env --name campus tu-router
 
 Stop service: docker stop campus
 View logs: docker logs campus
@@ -16,6 +21,19 @@ View logs: docker logs campus
 ================================================================================
 API ENDPOINTS - COPY & PASTE EXAMPLES
 ================================================================================
+
+WEATHER DATA
+------------
+Response: Current weather with temperature, description, icon URL, and air quality index
+
+# TU Berlin campus (default location - TU Berlin campus)
+http://localhost:8000/api/weather
+
+# Custom location with combined coordinates
+http://localhost:8000/api/weather?coords=52.520,13.405
+
+# Custom location with separate parameters
+http://localhost:8000/api/weather?lat=52.520&lon=13.405
 
 ROUTE PLANNING
 --------------
@@ -133,6 +151,11 @@ curl -X DELETE http://localhost:8000/api/cache/clear
 ================================================================================
 API PARAMETERS REFERENCE
 ================================================================================
+WEATHER:
+- coords: "lat,lon" OR use lat + lon separately
+- Default location: TU Berlin campus (52.512, 13.327)
+- Response includes: temperature (°C), description, icon URL, air quality index (1-5)
+
 ROUTES:
 - from: "lat,lon" OR use from_lat + from_lon separately
 - to: "lat,lon" OR use to_lat + to_lon separately  
@@ -156,13 +179,16 @@ MENSA:
 ================================================================================
 TECHNICAL NOTES
 ================================================================================
+- Weather API requires OpenWeatherMap API key (free: https://openweathermap.org/api)
+- Air Quality Index: 1=Good, 2=Fair, 3=Moderate, 4=Poor, 5=Very Poor
+- Weather icons: Direct URLs to OpenWeatherMap icon images
 - Maximum route duration: 30 minutes
 - Coordinate format: Decimal degrees (WGS84)
 - Time format: ISO 8601 with timezone
-- Cache TTL: Routes 5min, Bikes 30s, Mensa 1 week
+- Cache TTL: Routes 5min, Bikes 30s, Mensa 1 week, Weather no cache yet
 - First mensa request: ~20s (browser startup)
 - API documentation: http://localhost:8000/docs
 - OpenAPI schema: http://localhost:8000/openapi.json
 - Scope: Campus area routes (Scenario A). Indoor H-building navigation not implemented.
 
-================================================================================s
+================================================================================
