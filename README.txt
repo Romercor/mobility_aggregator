@@ -185,10 +185,10 @@ TECHNICAL NOTES
 - Maximum route duration: 30 minutes
 - Coordinate format: Decimal degrees (WGS84)
 - Time format: ISO 8601 with timezone
-- Cache TTL: Routes 5min, Bikes 30s, Mensa 1 week, Weather no cache yet
+- Cache TTL: Routes 5min, Bikes 30s, Mensa 1 week
 - First mensa request: ~20s (browser startup)
 - API documentation: http://localhost:8000/docs
 - OpenAPI schema: http://localhost:8000/openapi.json
-- Scope: Campus area routes (Scenario A). Indoor H-building navigation not implemented.
+- Scope: Campus area routes (Scenario A)
 
 ================================================================================
