@@ -1,13 +1,15 @@
-version: '3.8'
-
 services:
-  tubify-route-aggregator:
-    container_name:  tubify-mobility-aggregator
-    image:  tubify-mobility-aggregator
-    ports:
-      - "5550:8080"
+  tubify-external-api:
+    image: tubify-external-api
+    container_name: tubify-external-api
+    restart: unless-stopped
+    expose:
+      - "8000"
     networks:
       - tubify-net
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+
 networks:
   tubify-net:
     external: true
