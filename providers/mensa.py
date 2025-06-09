@@ -19,11 +19,11 @@ class MensaProvider(BaseProvider):
         },
         "marchstrasse": {
             "name": "Mensa Marchstrasse", 
-            "url": "https://www.stw.berlin/mensen/einrichtungen/technische-universität-berlin/mensa-tu-marchstraße.html"
+            "url": "https://www.stw.berlin/en/student-canteens/overview-student-canteens/technische-universität-berlin/mensa-tu-marchstrasse.html"
         },
         "veggie": {
             "name": "Veggie2.0",
-            "url": "https://www.stw.berlin/mensen/einrichtungen/technische-universität-berlin/veggie2.0.html"
+            "url": "https://www.stw.berlin/en/student-canteens/overview-student-canteens/technische-universität-berlin/veggie2.0.html"
         }
     }
     
@@ -178,7 +178,7 @@ class MensaProvider(BaseProvider):
             day_menu = DayMenu(
                 day_name=day_name,
                 groups=groups,
-                is_available=len(groups) > 0
+                is_available=any(len(dishes) > 0 for dishes in groups.values())
             )
             days.append(day_menu)
         
