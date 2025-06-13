@@ -122,6 +122,9 @@ transport_cache = SimpleCache(max_size=100, ttl=30)
 # Mensa menu cache (changes daily) - 1 week
 mensa_cache = SimpleCache(max_size=50, ttl=604800)
 
+# Moses cache (semester schedules) - 2 weeks (changes rarely during semester)
+moses_cache = SimpleCache(max_size=100, ttl=1209600)
+
 # Backward compatibility for existing code
 CACHE_TTL = 30  # Keep original constant
 
@@ -158,7 +161,8 @@ async def cleanup_all_caches() -> Dict[str, int]:
         ("api", api_cache),
         ("geocoding", geocoding_cache),
         ("transport", transport_cache),
-        ("mensa", mensa_cache)
+        ("mensa", mensa_cache),
+        ("moses", moses_cache)
     ]:
         cleaned = await cache.cleanup_expired()
         results[name] = cleaned
@@ -171,5 +175,26 @@ def get_all_cache_stats() -> Dict[str, Dict[str, Any]]:
         "api_cache": api_cache.get_stats(),
         "geocoding_cache": geocoding_cache.get_stats(),
         "transport_cache": transport_cache.get_stats(),
-        "mensa_cache": mensa_cache.get_stats()
+        "mensa_cache": mensa_cache.get_stats(),
+        "moses_cache": moses_cache.get_stats()
+    }
+
+async def clear_all_caches():
+    """Clear all cache entries (use with caution)"""
+    # Get sizes before clearing
+    stats_before = get_all_cache_stats()
+    total_before = sum(cache["size"] for cache in stats_before.values())
+    
+    # Clear all caches
+    await api_cache.clear()
+    await geocoding_cache.clear()
+    await transport_cache.clear()
+    await mensa_cache.clear()
+    await moses_cache.clear()
+    
+    return {
+        "status": "completed",
+        "entries_removed": total_before,
+        "message": f"All caches cleared. Removed {total_before} entries total.",
+        "warning": "Cache performance may be slower until new data is cached"
     }

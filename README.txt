@@ -21,6 +21,18 @@ View logs: docker logs campus
 ================================================================================
 API ENDPOINTS - COPY & PASTE EXAMPLES
 ================================================================================
+STUDENT SCHEDULE(MOSES TU BERLIN)
+----------------
+Response: List of student lectures with course name, instructor, location, and time schedule
+
+# Basic query with stupo and semester
+http://localhost:8000/api/student-schedule?stupo=24544&semester=2
+
+# Include past lectures (filter_dates=false)
+http://localhost:8000/api/student-schedule?stupo=24544&semester=2&filter_dates=false
+
+# All parameters
+http://localhost:8000/api/student-schedule?stupo=24544&semester=2&filter_dates=true
 
 WEATHER DATA
 ------------

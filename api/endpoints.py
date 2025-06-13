@@ -13,7 +13,8 @@ from api.models import WeatherResponse
 from providers.weather import WeatherProvider
 from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup_all_caches
 from api.models import RoomEvent
-
+from providers.moses import StudentScheduleProvider
+from api.models import StudentLecture, StudentScheduleResponse
 router = APIRouter()
 @router.get("/health")
 async def health_check():
@@ -670,3 +671,41 @@ async def room_schedule(
         return events
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/student-schedule", response_model=StudentScheduleResponse)
+async def get_student_schedule(
+    stupo: str = Query(..., description="Studienordnung number"),
+    semester: int = Query(..., description="Current semester number", ge=1),
+    filter_dates: bool = Query(True, description="Filter out past lectures")
+):
+    """
+    Get student lecture schedule
+    
+    Args:
+        stupo: Studienordnung number (e.g., "24881")
+        semester: Current semester number (1, 2, 3, ...)
+        filter_dates: Filter out past lectures (default: True)
+        
+    Returns:
+        Student schedule with lectures and status message
+    """
+    try:
+        async with StudentScheduleProvider() as provider:
+            lectures = await provider.get_student_lectures(stupo, semester, filter_dates)
+        
+        # Generate message only when nothing found
+        message = None
+        if not lectures:
+            if filter_dates:
+                message = f"No current/future lectures found for Stupo {stupo}, Semester {semester}. Try disabling date filtering."
+            else:
+                message = f"No lectures found for Stupo {stupo}, Semester {semester}. Check if the parameters are correct."
+        
+        return StudentScheduleResponse(
+            lectures=lectures,
+            message=message,
+            total_count=len(lectures)
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching student schedule: {str(e)}")

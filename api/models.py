@@ -153,3 +153,14 @@ class RoomEvent(BaseModel):
     datetime: Optional[str] = None
     room: Optional[str] = None
     lecturer: Optional[str] = None
+class StudentLecture(BaseModel):
+    """Student lecture data"""
+    course_name: str
+    instructor: str
+    location: str
+    time_schedule: str
+class StudentScheduleResponse(BaseModel):
+    """API response for student schedule"""
+    lectures: List[StudentLecture]
+    message: Optional[str] = None
+    total_count: int
