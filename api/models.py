@@ -162,5 +162,6 @@ class StudentLecture(BaseModel):
 class StudentScheduleResponse(BaseModel):
     """API response for student schedule"""
     lectures: List[StudentLecture]
+    study_program_name: Optional[str] = None 
     message: Optional[str] = None
     total_count: int

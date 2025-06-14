@@ -680,29 +680,20 @@ async def get_student_schedule(
 ):
     """
     Get student lecture schedule
-    
-    Args:
-        stupo: Studienordnung number (e.g., "24881")
-        semester: Current semester number (1, 2, 3, ...)
-        filter_dates: Filter out past lectures (default: True)
-        
-    Returns:
-        Student schedule with lectures and status message
     """
     try:
         async with StudentScheduleProvider() as provider:
-            lectures = await provider.get_student_lectures(stupo, semester, filter_dates)
+            lectures, study_program_name = await provider.get_student_lectures_with_program_info(
+                stupo, semester, filter_dates
+            )
         
-        # Generate message only when nothing found
         message = None
         if not lectures:
-            if filter_dates:
-                message = f"No current/future lectures found for Stupo {stupo}, Semester {semester}. Try disabling date filtering."
-            else:
-                message = f"No lectures found for Stupo {stupo}, Semester {semester}. Check if the parameters are correct."
+            message = f"No available lectures found for Stupo {stupo}, Semester {semester}."
         
         return StudentScheduleResponse(
             lectures=lectures,
+            study_program_name=study_program_name,
             message=message,
             total_count=len(lectures)
         )

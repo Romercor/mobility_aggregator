@@ -220,51 +220,84 @@ class StudentScheduleProvider(BaseProvider):
                 continue
         
         return lectures
+    def extract_study_program_name(self, html_content: str) -> Optional[str]:
+        """Extract study program name from HTML using the 'Gewählte Studierendengruppen' section"""
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            gewaehlte_label = soup.find("label", string="Gewählte Studierendengruppen")
+            if not gewaehlte_label:
+                return None
+            tree_container = gewaehlte_label.find_next("div", class_="ui-tree")
+            if not tree_container:
+                return None
+            po_labels = tree_container.find_all("span", class_="label label-metakursgruppe gray")
+            
+            for po_label in po_labels:
+                if po_label.get_text(strip=True) == "PO":
+                    parent_span = po_label.parent
+                    if parent_span:
+                        study_program_name = ""
+                        for content in parent_span.contents:
+                            if hasattr(content, 'get_text'):
+                                if content != po_label:
+                                    study_program_name += content.get_text()
+                            else:
+                                study_program_name += str(content)
+                        
+                        study_program_name = study_program_name.strip()
+                        if study_program_name and len(study_program_name) > 5:
+                            return study_program_name
+            
+            return None
+                
+        except Exception as e:
+            print(f"Error extracting study program name: {str(e)}")
+            return None
     
-    async def get_student_lectures(
+    async def get_student_lectures_with_program_info(
         self, 
         stupo: str, 
         semester: int, 
         filter_dates: bool = True
-    ) -> List[StudentLecture]:
+    ) -> tuple[List[StudentLecture], Optional[str]]:
         """
-        Get lectures for a student (identical pattern to ALL other providers)
+        Get lectures AND study program name in one request
         
-        Args:
-            stupo: Studienordnung number
-            semester: Student's current semester
-            filter_dates: Filter out past lectures (default: True)
-            
         Returns:
-            List of current/future lectures
+            Tuple of (lectures, study_program_name)
         """
         try:
-            cache_key = f"student_lectures:{stupo}:{semester}:{filter_dates}"
+            cache_key = f"lectures_with_info:{stupo}:{semester}:{filter_dates}"
             cached_result = await moses_cache.get(cache_key)
             if cached_result:
                 try:
-                    return [StudentLecture(**lecture) for lecture in cached_result]
+                    lectures = [StudentLecture(**lecture) for lecture in cached_result["lectures"]]
+                    study_program_name = cached_result["study_program_name"]
+                    return lectures, study_program_name
                 except Exception as e:
-                    print(f"Error deserializing cached lectures: {str(e)}")
+                    print(f"Error deserializing cached data: {str(e)}")
             
             url = self.generate_url(stupo, semester)
             html_content = await self.fetch_page_async(url)
             
             if not html_content:
-                return []
+                return [], None
             
             lectures_data = self.parse_lectures_from_html(html_content, filter_dates)
-            
             lectures = [StudentLecture(**lecture_data) for lecture_data in lectures_data]
+            study_program_name = self.extract_study_program_name(html_content)
             
             try:
-                serializable_lectures = [lecture.model_dump() for lecture in lectures]
-                await moses_cache.set(cache_key, serializable_lectures)
+                cache_data = {
+                    "lectures": [lecture.model_dump() for lecture in lectures],
+                    "study_program_name": study_program_name
+                }
+                await moses_cache.set(cache_key, cache_data)
             except Exception as e:
-                print(f"Error caching lectures: {str(e)}")
+                print(f"Error caching data: {str(e)}")
             
-            return lectures
+            return lectures, study_program_name
             
         except Exception as e:
-            print(f"Error getting student lectures: {str(e)}")
-            return []
+            print(f"Error getting student data: {str(e)}")
+            return [], None
