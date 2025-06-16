@@ -587,32 +587,11 @@ async def cleanup_expired_cache():
         raise HTTPException(status_code=500, detail=f"Error cleaning cache: {str(e)}")
 
 @router.delete("/cache/clear")
-async def clear_all_caches():
-    """
-    Clear all cache entries (use with caution)
-    
-    Returns:
-        Confirmation of cache clearing
-    """
+async def clear_all_caches_endpoint():
+    """Clear all cache entries (use with caution)"""
     try:
-        from utils.cache import api_cache, geocoding_cache, transport_cache, mensa_cache
-        
-        # Get sizes before clearing
-        stats_before = get_all_cache_stats()
-        total_before = sum(cache["size"] for cache in stats_before.values())
-        
-        # Clear all caches
-        await api_cache.clear()
-        await geocoding_cache.clear()
-        await transport_cache.clear()
-        await mensa_cache.clear()
-        
-        return {
-            "status": "completed",
-            "entries_removed": total_before,
-            "message": f"All caches cleared. Removed {total_before} entries total.",
-            "warning": "Cache performance may be slower until new data is cached"
-        }
+        from utils.cache import clear_all_caches
+        return await clear_all_caches()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error clearing caches: {str(e)}")
     
