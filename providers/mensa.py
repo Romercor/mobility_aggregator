@@ -1,5 +1,7 @@
+# providers/mensa.py - Cache First Logic
+
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import asyncio
 import concurrent.futures
@@ -8,21 +10,29 @@ from providers.base import BaseProvider
 from api.models import WeeklyMenu, DayMenu, Dish
 from utils.cache import mensa_cache
 
+# Import database service
+try:
+    from database.service import DatabaseService
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
+    print("Warning: Database not available, using cache only")
+
 class MensaProvider(BaseProvider):
-    """Provider for TU Berlin mensa menus"""
+    """Provider for TU Berlin mensa menus with Cache First strategy"""
     
     # Mensa configuration - matching your original script exactly
     MENSAS = {
         "hardenbergstrasse": {
-            "name": "Mensa Hardenbergstrasse",
+            "name": "hardenbergstrasse",
             "url": "https://www.stw.berlin/en/student-canteens/overview-student-canteens/technische-universität-berlin/mensa-tu-hardenbergstrasse.html"
         },
         "marchstrasse": {
-            "name": "Mensa Marchstrasse", 
+            "name": "marchstrasse", 
             "url": "https://www.stw.berlin/en/student-canteens/overview-student-canteens/technische-universität-berlin/mensa-tu-marchstrasse.html"
         },
         "veggie": {
-            "name": "Veggie2.0",
+            "name": "veggie",
             "url": "https://www.stw.berlin/en/student-canteens/overview-student-canteens/technische-universität-berlin/veggie2.0.html"
         }
     }
@@ -33,7 +43,7 @@ class MensaProvider(BaseProvider):
     
     def __init__(self):
         super().__init__()
-        self.cache_ttl = 3600  # 1 hour cache (kept for reference, actual TTL is in unified cache)
+        self.cache_ttl = 3600  # Keep for reference
     
     def get_available_mensas(self) -> List[str]:
         """Get list of available mensa names"""
@@ -41,36 +51,80 @@ class MensaProvider(BaseProvider):
     
     async def get_weekly_menu(self, mensa_name: str, force_refresh: bool = False) -> Optional[WeeklyMenu]:
         """
-        Get weekly menu for a specific mensa with smart refresh logic
+        Get weekly menu with Cache First strategy
         """
         if mensa_name not in self.MENSAS:
             return None
         
-        # Check unified cache first
         cache_key = f"mensa_menu:{mensa_name}"
+        
+        # 1. Check unified cache first
         if not force_refresh:
             cached_menu = await mensa_cache.get(cache_key)
-            if cached_menu:  # Cache exists
+            if cached_menu:
                 try:
-                    # Smart refresh check
+                    # Same scheduling logic for cache
                     if not self._should_refresh_menu(cached_menu):
+                        print(f"Returning cached data for {mensa_name}")
                         return WeeklyMenu(**cached_menu)
                     else:
-                        print(f"Smart refresh triggered for {mensa_name}")
+                        print(f"Cache data stale for {mensa_name}")
                 except Exception as e:
                     print(f"Error with cached menu for {mensa_name}: {str(e)}")
             else:
-                print(f"No cached data for {mensa_name}, will scrape fresh data")
+                print(f"No cached data for {mensa_name}")
         
-        # Scrape fresh data (empty cache, force refresh, or smart refresh triggered)
+        # 2. Try database second (if available)
+        if DB_AVAILABLE and not force_refresh:
+            try:
+                print(f"DEBUG: Checking database for {mensa_name}")
+                db_data = await DatabaseService.get_mensa_menu(mensa_name)
+                print(f"DEBUG: DB data exists: {db_data is not None}")
+                
+                if db_data:
+                    print(f"DEBUG: DB last_updated: {db_data.get('last_updated')}")
+                    should_refresh = self._should_refresh_menu(db_data)
+                    print(f"DEBUG: Should refresh DB data: {should_refresh}")
+                    
+                    if not should_refresh:
+                        print(f"Returning fresh data from database for {mensa_name}")
+                        menu = self._parse_db_menu_data(db_data)
+                        
+                        # Restore cache from database
+                        try:
+                            await mensa_cache.set(cache_key, menu.model_dump())
+                            print(f"Cache restored from DB for {mensa_name}")
+                        except Exception as e:
+                            print(f"Error restoring cache for {mensa_name}: {str(e)}")
+                        
+                        return menu
+                    else:
+                        print(f"Database data stale for {mensa_name}")
+                else:
+                    print(f"No database data found for {mensa_name}")
+            except Exception as e:
+                print(f"Database query failed for {mensa_name}: {str(e)}")
+        
+        # 3. Scrape fresh data (last resort)
         mensa_config = self.MENSAS[mensa_name]
         try:
+            print(f"Scraping fresh data for {mensa_name}")
             menu_data = await self._scrape_weekly_menu(mensa_config["url"])
             weekly_menu = self._parse_menu_data(mensa_config["name"], menu_data)
             
-            # Cache the result
+            # Save to database first (if available)
+            if DB_AVAILABLE:
+                try:
+                    db_saved = await DatabaseService.save_mensa_menu(weekly_menu, force_refresh)
+                    if db_saved:
+                        print(f"Saved menu to database for {mensa_name}")
+                except Exception as e:
+                    print(f"Failed to save to database for {mensa_name}: {str(e)}")
+            
+            # Cache the result (always do this as fallback)
             try:
                 await mensa_cache.set(cache_key, weekly_menu.model_dump())
+                print(f"Cached menu for {mensa_name}")
             except Exception as e:
                 print(f"Error caching menu for {mensa_name}: {str(e)}")
             
@@ -79,6 +133,68 @@ class MensaProvider(BaseProvider):
         except Exception as e:
             print(f"Error scraping menu for {mensa_name}: {str(e)}")
             return None
+    
+
+    
+    def _parse_db_menu_data(self, db_data: dict) -> WeeklyMenu:
+        """Convert database JSON data back to WeeklyMenu object"""
+        days = []
+        for day_data in db_data["days"]:
+            groups = {}
+            for group_name, dishes_data in day_data["groups"].items():
+                dishes = [
+                    Dish(
+                        name=dish["name"],
+                        price=dish["price"],
+                        vegan=dish["vegan"],
+                        vegetarian=dish["vegetarian"]
+                    )
+                    for dish in dishes_data
+                ]
+                groups[group_name] = dishes
+            
+            day_menu = DayMenu(
+                day_name=day_data["day_name"],
+                groups=groups,
+                is_available=day_data["is_available"]
+            )
+            days.append(day_menu)
+        
+        return WeeklyMenu(
+            mensa_name=db_data["mensa_name"],
+            days=days,
+            last_updated=datetime.fromisoformat(db_data["last_updated"])
+        )
+    
+    def _should_refresh_menu(self, menu_data: dict) -> bool:
+        """
+        Unified scheduling logic for both cache and database data
+        """
+        try:
+            # Handle both datetime object and string
+            last_updated_raw = menu_data["last_updated"]
+            if isinstance(last_updated_raw, str):
+                last_updated = datetime.fromisoformat(last_updated_raw)
+            else:
+                last_updated = last_updated_raw  # Already a datetime object
+            
+            now = datetime.now()
+            
+            # Rule 1: If older than 7 days, always refresh
+            if (now - last_updated).days >= 7:
+                print(f"Data is {(now - last_updated).days} days old, refreshing...")
+                return True
+            
+            # Rule 2: If data is from previous week (any day of current week)
+            if last_updated.isocalendar()[1] < now.isocalendar()[1]:
+                print("Data from previous week, refreshing...")
+                return True
+                
+            return False
+            
+        except Exception as e:
+            print(f"Error checking refresh condition: {e}")
+            return True
     
     async def _scrape_weekly_menu(self, url: str) -> Dict[str, Dict]:
         """Scrape weekly menu - exact copy of your original script logic"""
@@ -150,7 +266,6 @@ class MensaProvider(BaseProvider):
                 browser.close()
             return weekly
         
-        # Run your original sync function in thread pool
         loop = asyncio.get_event_loop()
         with concurrent.futures.ThreadPoolExecutor() as executor:
             return await loop.run_in_executor(executor, fetch_weekly_menu_sync, url)
@@ -187,36 +302,3 @@ class MensaProvider(BaseProvider):
             days=days,
             last_updated=datetime.now()
         )
-    def _should_refresh_menu(self, cached_menu_data: dict) -> bool:
-        """
-        Simple logic to decide if menu should be refreshed
-        """
-        try:
-            from datetime import datetime, timedelta
-            
-            # Handle both datetime object and string
-            last_updated_raw = cached_menu_data["last_updated"]
-            if isinstance(last_updated_raw, str):
-                last_updated = datetime.fromisoformat(last_updated_raw)
-            else:
-                last_updated = last_updated_raw  # Already a datetime object
-            
-            now = datetime.now()
-            
-            # Rule 1: If older than 7 days, always refresh
-            if (now - last_updated).days >= 7:
-                print(f"Menu is {(now - last_updated).days} days old, refreshing...")
-                return True
-            
-            # Rule 2: Monday morning refresh (6am+) if data is from previous week
-            if (now.weekday() == 0 and  # Monday
-                now.hour >= 6 and       # After 6 AM
-                last_updated.isocalendar()[1] < now.isocalendar()[1]):  # Previous week
-                print("Monday morning refresh: data is from previous week")
-                return True
-                
-            return False
-            
-        except Exception as e:
-            print(f"Error checking refresh condition: {e}")
-            return True

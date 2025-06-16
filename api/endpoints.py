@@ -15,6 +15,13 @@ from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup
 from api.models import RoomEvent
 from providers.moses import StudentScheduleProvider
 from api.models import StudentLecture, StudentScheduleResponse
+try:
+    from database.service import DatabaseService
+    from database.connection import check_database_health, db_manager
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
+    
 router = APIRouter()
 @router.get("/health")
 async def health_check():
@@ -55,7 +62,13 @@ async def health_check():
         "status": status,
         "checks": checks
     }
-
+@router.get("/database/health")
+async def get_database_health():
+    try:
+        from database.connection import check_database_health
+        return await check_database_health()
+    except:
+        return {"status": "unavailable"}
 @router.get("/raw-routes")
 async def get_routes(
     from_lat: float = Query(..., description="Starting point latitude"),

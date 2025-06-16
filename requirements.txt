@@ -7,3 +7,6 @@ playwright>=1.40.0
 python-dotenv>=1.0.0
 lxml>=4.9.3
 requests>=2.31.0
+sqlalchemy>=2.0.23
+asyncpg>=0.29.0
+alembic>=1.12.1

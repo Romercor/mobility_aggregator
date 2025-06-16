@@ -1,3 +1,5 @@
+# providers/moses.py - Cache First Logic
+
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -7,8 +9,16 @@ from providers.base import BaseProvider
 from api.models import StudentLecture
 from utils.cache import moses_cache
 
+# Import database service
+try:
+    from database.service import DatabaseService
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
+    print("Warning: Database not available for Moses, using cache only")
+
 class StudentScheduleProvider(BaseProvider):
-    """Provider for TU Berlin student schedule data - FULLY ASYNC"""
+    """Provider for TU Berlin student schedule data with Cache First strategy"""
     
     def __init__(self):
         super().__init__()
@@ -55,6 +65,135 @@ class StudentScheduleProvider(BaseProvider):
         ]
         
         return f"{base_url}?" + "&".join(params)
+    
+    async def get_student_lectures_with_program_info(
+        self, 
+        stupo: str, 
+        semester: int, 
+        filter_dates: bool = True
+    ) -> tuple[List[StudentLecture], Optional[str]]:
+        """
+        Get lectures AND study program name with Cache First strategy
+        
+        Returns:
+            Tuple of (lectures, study_program_name)
+        """
+        cache_key = f"lectures_with_info:{stupo}:{semester}:{filter_dates}"
+        
+        # 1. Check unified cache first
+        try:
+            cached_result = await moses_cache.get(cache_key)
+            if cached_result:
+                # Same scheduling logic as mensa
+                if not self._should_refresh_schedule(cached_result):
+                    print(f"Returning cached data for {stupo}:{semester}")
+                    lectures = [StudentLecture(**lecture) for lecture in cached_result["lectures"]]
+                    study_program_name = cached_result["study_program_name"]
+                    return lectures, study_program_name
+                else:
+                    print(f"Cache data stale for {stupo}:{semester}")
+        except Exception as e:
+            print(f"Cache error for {stupo}:{semester}: {str(e)}")
+        
+        # 2. Try database second (if available)
+        if DB_AVAILABLE:
+            try:
+                db_data = await DatabaseService.get_student_schedule(stupo, semester)
+                if db_data:
+                    # Same scheduling logic for database
+                    if not self._should_refresh_schedule(db_data):
+                        print(f"Returning fresh data from database for {stupo}:{semester}")
+                        lectures = [StudentLecture(**lecture) for lecture in db_data["schedule_data"]]
+                        study_program_name = db_data["study_program_name"]
+                        
+                        # Restore cache from database
+                        try:
+                            cache_data = {
+                                "lectures": [lecture.model_dump() for lecture in lectures],
+                                "study_program_name": study_program_name,
+                                "last_updated": db_data["last_updated"]
+                            }
+                            await moses_cache.set(cache_key, cache_data)
+                            print(f"Cache restored from DB for {stupo}:{semester}")
+                        except Exception as e:
+                            print(f"Error restoring cache for {stupo}:{semester}: {str(e)}")
+                        
+                        return lectures, study_program_name
+                    else:
+                        print(f"Database data stale for {stupo}:{semester}")
+            except Exception as e:
+                print(f"Database query failed for {stupo}:{semester}: {str(e)}")
+        
+        # 3. Scrape fresh data (last resort)
+        print(f"Scraping fresh data for {stupo}:{semester}")
+        
+        try:
+            url = self.generate_url(stupo, semester)
+            html_content = await self.fetch_page_async(url)
+            
+            if not html_content:
+                print(f"No HTML content received for {stupo}:{semester}")
+                return [], None
+            
+            lectures_data = self.parse_lectures_from_html(html_content, filter_dates)
+            lectures = [StudentLecture(**lecture_data) for lecture_data in lectures_data]
+            study_program_name = self.extract_study_program_name(html_content)
+            
+            # Save to database first (if available)
+            if DB_AVAILABLE:
+                try:
+                    db_saved = await DatabaseService.save_student_schedule(
+                        stupo, semester, lectures, study_program_name
+                    )
+                    if db_saved:
+                        print(f"Saved to database: {stupo}:{semester}")
+                except Exception as e:
+                    print(f"Failed to save to database for {stupo}:{semester}: {str(e)}")
+            
+            # Cache the result (always do this as fallback)
+            try:
+                cache_data = {
+                    "lectures": [lecture.model_dump() for lecture in lectures],
+                    "study_program_name": study_program_name,
+                    "last_updated": datetime.now().isoformat()
+                }
+                await moses_cache.set(cache_key, cache_data)
+                print(f"Cached data for {stupo}:{semester}")
+            except Exception as e:
+                print(f"Error caching data for {stupo}:{semester}: {str(e)}")
+            
+            return lectures, study_program_name
+            
+        except Exception as e:
+            print(f"Scraping failed for {stupo}:{semester}: {str(e)}")
+            return [], None
+    
+    def _should_refresh_schedule(self, schedule_data: dict) -> bool:
+        """
+        Unified scheduling logic for both cache and database schedule data
+        Same logic as mensa but adapted for schedule data
+        """
+        try:
+            # Handle both datetime object and string
+            last_updated_raw = schedule_data.get("last_updated")
+            if not last_updated_raw:
+                return True
+            
+            if isinstance(last_updated_raw, str):
+                last_updated = datetime.fromisoformat(last_updated_raw)
+            else:
+                last_updated = last_updated_raw
+            
+            now = datetime.now()
+            if (now - last_updated).days >= 14:
+                print(f"Schedule data is {(now - last_updated).days} days old, refreshing...")
+                return True
+                
+            return False
+            
+        except Exception as e:
+            print(f"Error checking schedule refresh condition: {e}")
+            return True
     
     def parse_date_from_german(self, date_str: str) -> Optional[datetime]:
         """Parse German date format 'DD.MM.YY' to datetime"""
@@ -220,6 +359,7 @@ class StudentScheduleProvider(BaseProvider):
                 continue
         
         return lectures
+    
     def extract_study_program_name(self, html_content: str) -> Optional[str]:
         """Extract study program name from HTML using the 'Gewählte Studierendengruppen' section"""
         try:
@@ -253,51 +393,3 @@ class StudentScheduleProvider(BaseProvider):
         except Exception as e:
             print(f"Error extracting study program name: {str(e)}")
             return None
-    
-    async def get_student_lectures_with_program_info(
-        self, 
-        stupo: str, 
-        semester: int, 
-        filter_dates: bool = True
-    ) -> tuple[List[StudentLecture], Optional[str]]:
-        """
-        Get lectures AND study program name in one request
-        
-        Returns:
-            Tuple of (lectures, study_program_name)
-        """
-        try:
-            cache_key = f"lectures_with_info:{stupo}:{semester}:{filter_dates}"
-            cached_result = await moses_cache.get(cache_key)
-            if cached_result:
-                try:
-                    lectures = [StudentLecture(**lecture) for lecture in cached_result["lectures"]]
-                    study_program_name = cached_result["study_program_name"]
-                    return lectures, study_program_name
-                except Exception as e:
-                    print(f"Error deserializing cached data: {str(e)}")
-            
-            url = self.generate_url(stupo, semester)
-            html_content = await self.fetch_page_async(url)
-            
-            if not html_content:
-                return [], None
-            
-            lectures_data = self.parse_lectures_from_html(html_content, filter_dates)
-            lectures = [StudentLecture(**lecture_data) for lecture_data in lectures_data]
-            study_program_name = self.extract_study_program_name(html_content)
-            
-            try:
-                cache_data = {
-                    "lectures": [lecture.model_dump() for lecture in lectures],
-                    "study_program_name": study_program_name
-                }
-                await moses_cache.set(cache_key, cache_data)
-            except Exception as e:
-                print(f"Error caching data: {str(e)}")
-            
-            return lectures, study_program_name
-            
-        except Exception as e:
-            print(f"Error getting student data: {str(e)}")
-            return [], None
