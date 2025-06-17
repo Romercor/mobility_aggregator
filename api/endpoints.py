@@ -77,7 +77,8 @@ async def get_routes(
     to_lon: float = Query(..., description="Destination longitude"),
     departure: Optional[str] = Query(None, description="Departure time in ISO format (e.g. 2025-05-04T21:41:00+02:00)"),
     results: int = Query(1, description="Maximum number of route options", ge=1, le=5),
-    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way")
+    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way"),
+    polylines: bool = Query(False, description="Include route geometry")
 ):
     """
     Get route data from BVG API
@@ -100,7 +101,8 @@ async def get_routes(
                 to_lon=to_lon,
                 departure_time=departure_time,
                 max_results=results,
-                include_stopovers=stopovers
+                include_stopovers=stopovers,
+                polylines=polylines
             )
         
         return routes_data
@@ -117,7 +119,8 @@ async def get_routes(
     to_coords: Optional[str] = Query(None, alias="to", description="Destination coordinates 'lat,lon'"),
     departure: Optional[str] = Query(None, description="Departure time in ISO format (e.g. 2025-05-05T11:09:00+02:00)"),
     results: int = Query(1, description="Maximum number of route options", ge=1, le=5),
-    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way")
+    stopovers: bool = Query(False, description="Fetch & parse stopovers on the way"),
+    polylines: bool = Query(False, description="Include route geometry") 
 ):
     """
     Get structured route data from BVG API
@@ -132,6 +135,7 @@ async def get_routes(
         departure: Departure time in ISO format (optional, default: now)
         results: Maximum number of route options to return (default: 1, max: 5)
         stopovers: Include stopover information in results
+        polylines: Include route geometry in results
     
     Returns:
         Structured route data
@@ -166,7 +170,7 @@ async def get_routes(
                 raise HTTPException(status_code=400, detail="Invalid departure time format. Use ISO format (e.g. 2025-05-05T11:09:00+02:00)")
         
         # Try to get from unified cache
-        cache_key = f"parsed_routes:{from_lat:.6f}:{from_lon:.6f}:{to_lat:.6f}:{to_lon:.6f}:{departure}:{results}:{stopovers}"
+        cache_key = f"parsed_routes:{from_lat:.6f}:{from_lon:.6f}:{to_lat:.6f}:{to_lon:.6f}:{departure}:{results}:{stopovers}:{polylines}"
         cached_result = await api_cache.get(cache_key)
         if cached_result:
             try:
@@ -185,7 +189,8 @@ async def get_routes(
                 to_lon=to_lon,
                 departure_time=departure_time,
                 max_results=results,
-                include_stopovers=stopovers
+                include_stopovers=stopovers,
+                polylines=polylines
             )
         
         # Cache the results as serializable data

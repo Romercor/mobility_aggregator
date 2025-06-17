@@ -32,6 +32,7 @@ class RouteLeg(BaseModel):
     platform: Optional[str] = None
     warnings: List[str] = Field(default_factory=list)
     stopovers: List[Stopover] = Field(default_factory=list)
+    polyline: Optional[Dict[str, Any]] = None
 class Route(BaseModel):
     """Complete route"""
     legs: List[RouteLeg]

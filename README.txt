@@ -1,6 +1,6 @@
 ================================================================================
                         TU BERLIN CAMPUS ROUTER API
-                              Version 1.3
+                              Version 1.5
 ================================================================================
 
 INSTALLATION
@@ -73,8 +73,11 @@ http://localhost:8000/api/routes?from=52.5125,13.3270&to=52.5070,13.3321&stopove
 # Specific departure time (ISO 8601)
 http://localhost:8000/api/routes?from=52.5141,13.3295&to=52.5053,13.3039&departure=2025-05-28T15:30:00%2B02:00
 
+# With public transport route geometry (polylines) for map visualization
+http://localhost:8000/api/routes?from=52.5133,13.3247&to=52.5147,13.3149&polylines=true
+
 # All parameters combined
-http://localhost:8000/api/routes?from=52.5141,13.3295&to=52.5053,13.3039&results=5&stopovers=true&departure=2025-05-28T09:00:00%2B02:00
+http://localhost:8000/api/routes?from=52.5141,13.3295&to=52.5053,13.3039&results=5&stopovers=true&departure=2025-05-28T09:00:00%2B02:00&polylines=true
 
 # Raw BVG API response (requires separate lat/lon)
 http://localhost:8000/api/raw-routes?from_lat=52.5133&from_lon=13.3247&to_lat=52.5147&to_lon=13.3149&results=2&stopovers=false

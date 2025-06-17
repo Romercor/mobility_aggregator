@@ -14,14 +14,15 @@ class BvgProvider(BaseProvider):
         self.base_url = "https://v6.bvg.transport.rest"
     
     async def get_routes(
-        self, 
-        from_lat: float, 
-        from_lon: float, 
-        to_lat: float, 
+        self,
+        from_lat: float,
+        from_lon: float,
+        to_lat: float,
         to_lon: float,
         departure_time: Optional[datetime] = None,
         max_results: int = 2,
-        include_stopovers: bool = True
+        include_stopovers: bool = True,
+        polylines: bool = False
     ) -> Dict[str, Any]:
         """
         Get routes between two points using only coordinates
@@ -33,6 +34,8 @@ class BvgProvider(BaseProvider):
             to_lon: Destination longitude
             departure_time: Departure time (default: now)
             max_results: Maximum number of route options
+            include_stopovers: Include intermediate stops
+            polylines: Include route geometry  # ← ДОБАВИТЬ В ОПИСАНИЕ
             
         Returns:
             Dictionary with raw API data
@@ -52,7 +55,8 @@ class BvgProvider(BaseProvider):
                 
                 # Number of results
                 "results": max_results,
-                "stopovers" : "true"  if include_stopovers else "false"
+                "stopovers": "true" if include_stopovers else "false",
+                "polylines": "true" if polylines else "false"
             }
             
             # Add departure time if specified
@@ -89,6 +93,7 @@ class BvgProvider(BaseProvider):
         except Exception as e:
             print(f"Error fetching route data: {str(e)}")
             return {"error": str(e)}
+        
     async def get_parsed_routes(
         self, 
         from_lat: float, 
@@ -97,7 +102,8 @@ class BvgProvider(BaseProvider):
         to_lon: float,
         departure_time: Optional[datetime] = None,
         max_results: int = 3,
-        include_stopovers: bool = False
+        include_stopovers: bool = False,
+        polylines: bool = False
     ) -> RouteResponse:
         """
         Get parsed routes between two points
@@ -108,8 +114,8 @@ class BvgProvider(BaseProvider):
             to_lat: Destination latitude
             to_lon: Destination longitude
             departure_time: Departure time (default: now)
-            max_results: Maximum number of route options
-            
+            include_stopovers: Include intermediate stops
+            polylines: Include route geometry 
         Returns:
             Structured route data
         """
@@ -122,7 +128,8 @@ class BvgProvider(BaseProvider):
                 to_lon=to_lon,
                 departure_time=departure_time,
                 max_results=max_results,
-                include_stopovers=include_stopovers
+                include_stopovers=include_stopovers,
+                polylines=polylines
             )
             
             # Parse raw data
@@ -258,7 +265,8 @@ class BvgProvider(BaseProvider):
                         platform = leg.get("departurePlatform")
                     elif leg.get("arrivalPlatform"):
                         platform = leg.get("arrivalPlatform")
-                    
+                    # Extract polyline
+                    polyline_data = leg.get("polyline") if not is_walking else None
                     # Create leg
                     route_leg = RouteLeg(
                         start=start_point,
@@ -271,7 +279,8 @@ class BvgProvider(BaseProvider):
                         delay_minutes=delay_minutes,
                         distance=distance,
                         platform=platform,
-                        warnings=warnings
+                        warnings=warnings,
+                        polyline=polyline_data
                     )
 
                     # Process stopovers
