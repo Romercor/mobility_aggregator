@@ -11,7 +11,7 @@ class BvgProvider(BaseProvider):
     
     def __init__(self):
         super().__init__()
-        self.base_url = "https://v6.bvg.transport.rest"
+        self.base_url = "https://v6.vbb.transport.rest"
     
     async def get_routes(
         self,
