@@ -163,6 +163,28 @@ curl -X POST http://localhost:8000/api/cache/cleanup
 curl -X DELETE http://localhost:8000/api/cache/clear
 # PowerShell: Invoke-WebRequest -Method DELETE http://localhost:8000/api/cache/clear
 
+DATABASE (OPTIONAL)
+------------------
+The API can use PostgreSQL for persistent storage of mensa menus and student schedules.
+Without database: Data cached in memory only, cleared on restart
+With database: Persistent cache, faster subsequent requests
+
+Required environment variables:
+DB_HOST=localhost
+DB_PORT=5432  
+DB_NAME=campus_router
+DB_USER=campus_user
+DB_PASSWORD=campus_pass
+
+Docker with database:
+docker run -d -p 8000:8000 \
+  -e OPENWEATHER_API_KEY="your_key_here" \
+  -e DB_HOST="your_postgres_host" \
+  -e DB_PASSWORD="your_db_password" \
+  --name campus tu-router
+
+Database stores: Mensa menus (1 week cache), Student schedules (2 week cache)
+Health check: http://localhost:8000/api/database/health
 ================================================================================
 API PARAMETERS REFERENCE
 ================================================================================
