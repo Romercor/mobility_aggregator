@@ -22,7 +22,7 @@ async def find_nearest_stations(
     Returns:
         List of nearest public transport stops
     """
-    base_url = "https://v6.bvg.transport.rest"
+    base_url = "https://v6.vbb.transport.rest"
     close_client = False
     
     try:
