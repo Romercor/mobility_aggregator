@@ -5,7 +5,7 @@ from utils.geocoding import reverse_geocode
 from providers.base import BaseProvider
 from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep, Stopover
 from utils.api_checker import get_current_journeys_api_base
-MAX_ROUTE_DURATION_MINUTES = 30
+MAX_ROUTE_DURATION_MINUTES = 1000 # change for route time restriction
 class BvgProvider(BaseProvider):
     """Provider for BVG public transport data"""
     
