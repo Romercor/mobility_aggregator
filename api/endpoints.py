@@ -15,6 +15,7 @@ from utils.cache import api_cache, transport_cache, get_all_cache_stats, cleanup
 from api.models import RoomEvent
 from providers.moses import StudentScheduleProvider
 from api.models import StudentLecture, StudentScheduleResponse
+from utils.api_checker import get_api_status
 try:
     from database.service import DatabaseService
     from database.connection import check_database_health, db_manager
@@ -25,7 +26,7 @@ except ImportError:
 router = APIRouter()
 @router.get("/health")
 async def health_check():
-    """Enhanced health check"""
+    """Health check using cached API status"""
     status = "ok"
     checks = []
     
@@ -38,30 +39,70 @@ async def health_check():
         checks.append("cache: ✗")
         status = "degraded"
     
-    # Check APIs (2s timeout)
-    async def check(url):
-        try:
-            async with httpx.AsyncClient(timeout=2.0) as client:
-                r = await client.head(url)
-                return r.status_code < 500
-        except:
-            return False
+    # Get last known API status (no HTTP calls!)
+    try:
+        api_status = await get_api_status()
+        
+        # Show current active APIs
+        checks.append(f"stations: {api_status['stations_api']['provider']}")
+        checks.append(f"journeys: {api_status['journeys_api']['provider']}")
+        
+        # Check if last check was recent
+        last_check = datetime.datetime.fromisoformat(api_status['last_check'])
+        age_minutes = (datetime.datetime.now() - last_check).total_seconds() / 60
+        
+        if age_minutes > 10:
+            status = "degraded"
+            checks.append(f"last_check: {int(age_minutes)}min ago")
+        else:
+            checks.append(f"last_check: {int(age_minutes)}min ago")
+    except:
+        checks.append("api_status: ✗")
+        status = "degraded"
     
-    if await check("https://v6.bvg.transport.rest"):
-        checks.append("bvg: ✓")
-    else:
-        checks.append("bvg: ✗")
-        status = "unhealthy"
-    
-    if await check("https://api.nextbike.net/maps/nextbike-live.json"):
-        checks.append("bikes: ✓")
-    else:
+    # Check NextBike
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.head("https://api.nextbike.net/maps/nextbike-live.json")
+            if r.status_code < 500:
+                checks.append("bikes: ✓")
+            else:
+                checks.append("bikes: ✗")
+    except:
         checks.append("bikes: ✗")
+    
+    # Check OpenWeatherMap
+    try:
+        import os
+        api_key = os.getenv("OPENWEATHER_API_KEY")
+        if api_key:
+            async with httpx.AsyncClient(timeout=3.0) as client:
+                # Test with TU Berlin coordinates
+                params = {
+                    "lat": 52.51254994596774,
+                    "lon": 13.326949151892109,
+                    "appid": api_key,
+                    "units": "metric"
+                }
+                r = await client.get("https://api.openweathermap.org/data/2.5/weather", params=params)
+                if r.status_code == 200:
+                    data = r.json()
+                    if "main" in data and "temp" in data["main"]:
+                        checks.append("weather: ✓")
+                    else:
+                        checks.append("weather: ✗")
+                else:
+                    checks.append("weather: ✗")
+        else:
+            checks.append("weather: no-key")
+    except:
+        checks.append("weather: ✗")
     
     return {
         "status": status,
         "checks": checks
     }
+
 @router.get("/database/health")
 async def get_database_health():
     try:

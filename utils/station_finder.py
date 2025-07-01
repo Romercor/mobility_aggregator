@@ -3,7 +3,7 @@ from typing import Optional, List, Dict, Any
 import httpx
 from api.models import PublicTransportStop
 from .cache import transport_cache
-
+from utils.api_checker import get_current_stations_api_base
 async def find_nearest_stations(
     lat: float, 
     lon: float, 
@@ -22,10 +22,17 @@ async def find_nearest_stations(
     Returns:
         List of nearest public transport stops
     """
-    base_url = "https://v6.vbb.transport.rest"
     close_client = False
     
     try:
+        # Try to get dynamic URL with fallback
+        try:
+            from utils.api_checker import get_current_stations_api_base
+            base_url = await get_current_stations_api_base()
+        except Exception as e:
+            print(f"Failed to get dynamic API URL: {e}, using fallback")
+            base_url = "https://v6.bvg.transport.rest"
+
         # If no client provided, create one
         if client is None:
             client = httpx.AsyncClient(timeout=10.0)

@@ -4,14 +4,13 @@ from datetime import datetime, timedelta
 from utils.geocoding import reverse_geocode
 from providers.base import BaseProvider
 from api.models import Route, RouteLeg, RoutePoint, RouteResponse, PrettyRouteResponse, PrettyRoute, RouteStep, Stopover
-
+from utils.api_checker import get_current_journeys_api_base
 MAX_ROUTE_DURATION_MINUTES = 30
 class BvgProvider(BaseProvider):
     """Provider for BVG public transport data"""
     
     def __init__(self):
         super().__init__()
-        self.base_url = "https://v6.vbb.transport.rest"
     
     async def get_routes(
         self,
@@ -41,6 +40,13 @@ class BvgProvider(BaseProvider):
             Dictionary with raw API data
         """
         try:
+            # Get dynamic URL with fallback
+            try:
+                base_url = await get_current_journeys_api_base()
+            except Exception as e:
+                print(f"Failed to get dynamic API URL: {e}, using fallback")
+                base_url = "https://v6.bvg.transport.rest"
+
             # Prepare request parameters
             params = {
                 # Starting point
@@ -65,7 +71,7 @@ class BvgProvider(BaseProvider):
             
             # Make request to API
             response = await self.client.get(
-                f"{self.base_url}/journeys",
+                f"{base_url}/journeys",
                 params=params
             )
             try:
