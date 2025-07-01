@@ -163,6 +163,11 @@ curl -X POST http://localhost:8000/api/cache/cleanup
 curl -X DELETE http://localhost:8000/api/cache/clear
 # PowerShell: Invoke-WebRequest -Method DELETE http://localhost:8000/api/cache/clear
 
+Note: 
+The service automatically runs health checks every 10 minutes for all core services. 
+Automatic switch between BVG and VBB provider on failure. 
+see the results in http://localhost:8000/api/health
+
 DATABASE (OPTIONAL)
 ------------------
 The API can use PostgreSQL for persistent storage of mensa menus and student schedules.
