@@ -1,6 +1,6 @@
 ================================================================================
                         TU BERLIN CAMPUS ROUTER API
-                              Version 1.5
+                              Version 1.6
 ================================================================================
 
 INSTALLATION
@@ -162,6 +162,11 @@ curl -X POST http://localhost:8000/api/cache/cleanup
 # Clear entire cache (DELETE)
 curl -X DELETE http://localhost:8000/api/cache/clear
 # PowerShell: Invoke-WebRequest -Method DELETE http://localhost:8000/api/cache/clear
+
+Note: 
+The service automatically runs health checks every 10 minutes for all core services. 
+Automatic switch between BVG and VBB provider on failure. 
+see the results in http://localhost:8000/api/health
 
 DATABASE (OPTIONAL)
 ------------------
