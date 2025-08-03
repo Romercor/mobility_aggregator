@@ -1,236 +1,324 @@
-================================================================================
-                        TU BERLIN CAMPUS ROUTER API
-                              Version 1.6
-================================================================================
+# 🚀 TU Berlin Campus Router API
 
-INSTALLATION
-------------
-1. Install Docker Desktop: https://docker.com
-2. Get free OpenWeatherMap API key: https://openweathermap.org/api
-3. Load image: docker load < tu-router.tar  
-4. Start with API key: docker run -d -p 8000:8000 -e OPENWEATHER_API_KEY="your_key_here" --name campus tu-router
-5. Access API: http://localhost:8000/docs
+[![API Status](https://img.shields.io/badge/API-Active-green)](http://localhost:8000/docs)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://hub.docker.com/)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-orange)](http://localhost:8000/docs)
 
-Alternative: Use .env file
+A comprehensive mobility aggregation API for TU Berlin campus, providing route planning, public transport information, bike sharing, weather data, mensa menus, and student schedules.
+
+## 🎯 Quick Start
+
+```bash
+# 1. Get your free OpenWeatherMap API key
+# Visit: https://openweathermap.org/api
+
+# 2. Clone and build the container
+git clone https://github.com/your-username/tu-berlin-campus-router.git
+cd tu-berlin-campus-router
+docker build -t tu-router .
+
+# 3. Start the API
+docker run -d -p 8000:8000 -e OPENWEATHER_API_KEY="your_key_here" --name campus tu-router
+
+# 4. Test the API
+curl "http://localhost:8000/api/routes?from=52.5133,13.3247&to=52.5147,13.3149"
+
+# 5. Explore interactive docs
+open http://localhost:8000/docs
+```
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Campus Router   │    │  External APIs  │
+│                 │◄──►│      API         │◄──►│                 │
+│ (Your App)      │    │                  │    │ BVG/VBB        │
+└─────────────────┘    │  ┌─────────────┐ │    │ NextBike       │
+                       │  │   Cache     │ │    │ OpenWeather    │
+┌─────────────────┐    │  │   System    │ │    │ TU Moses       │
+│   PostgreSQL    │◄──►│  └─────────────┘ │    │ Mensa STW      │
+│   (Optional)    │    └──────────────────┘    └─────────────────┘
+└─────────────────┘
+```
+
+### Core Components
+- **Route Planning**: BVG/VBB public transport integration with intelligent fallback
+- **Bike Sharing**: NextBike availability and location data
+- **Weather Service**: OpenWeatherMap with air quality index
+- **Mensa Integration**: Real-time menu scraping with weekly caching
+- **Student Schedules**: Moses TU Berlin integration for course schedules
+- **Multi-layer Caching**: Memory + optional PostgreSQL persistence
+- **Health Monitoring**: Automatic API switching and status tracking
+
+## 📚 API Reference
+
+### 🚌 Route Planning
+Get optimized public transport routes across (TU) Berlin.
+
+```bash
+# Basic route planning
+GET /api/routes?from=52.5133,13.3247&to=52.5147,13.3149
+
+# With multiple alternatives and stopovers
+GET /api/routes?from=52.5133,13.3247&to=52.5147,13.3149&results=3&stopovers=true
+
+# Scheduled departure
+GET /api/routes?from=52.5133,13.3247&to=52.5147,13.3149&departure=2025-05-28T15:30:00%2B02:00
+```
+
+<details>
+<summary>📋 Route Response Example</summary>
+
+```json
+{
+  "routes": [
+    {
+      "legs": [
+        {
+          "start": {"name": "TU Berlin Main Building", "latitude": 52.5133, "longitude": 13.3247},
+          "end": {"name": "Ernst-Reuter-Platz", "latitude": 52.5147, "longitude": 13.3149},
+          "type": "subway",
+          "line": "U2",
+          "direction": "Pankow",
+          "departure_time": "2025-05-28T15:32:00+02:00",
+          "arrival_time": "2025-05-28T15:35:00+02:00",
+          "platform": "Gleis 1"
+        }
+      ],
+      "duration_minutes": 8,
+      "transfers": 0,
+      "walking_distance": 120
+    }
+  ]
+}
+```
+</details>
+
+### 🚲 Bike Sharing
+Find available NextBike bikes near any location.
+
+```bash
+# Find nearby bikes
+GET /api/bikes/nearby?coords=52.5125,13.3270&radius=1000&limit=10
+```
+
+### 🌤️ Weather & Air Quality
+Current weather conditions with air quality index.
+
+```bash
+# Campus weather (default)
+GET /api/weather
+
+# Custom location
+GET /api/weather?coords=52.520,13.405
+```
+
+### 🍽️ Mensa Menus
+Weekly menus from TU Berlin cafeterias.
+
+```bash
+# Get specific mensa menu
+GET /api/mensa/hardenbergstrasse/menu
+
+# All mensas at once
+GET /api/mensa/all-menus
+
+# Available mensa list
+GET /api/mensa/list
+```
+
+### 📚 Student Schedules
+Access your course schedule from Moses TU Berlin.
+
+```bash
+# Get your lectures (requires stupo number)
+GET /api/student-schedule?stupo=24544&semester=2
+```
+
+### 🚉 Station Finder
+Locate nearest public transport stations.
+
+```bash
+# Find stations by transport type
+GET /api/nearest-stations?coords=52.5125,13.3270&transport_type=subway
+```
+
+## 🛠️ Installation & Configuration
+
+### Docker Installation (Recommended)
+```bash
+# Load the image
+docker load < tu-router.tar
+
+# Run with environment variables
+docker run -d -p 8000:8000 \
+  -e OPENWEATHER_API_KEY="your_key_here" \
+  --name campus tu-router
+
+# Alternative: Using .env file
 echo "OPENWEATHER_API_KEY=your_key_here" > .env
 docker run -d -p 8000:8000 --env-file .env --name campus tu-router
+```
 
-Stop service: docker stop campus
-View logs: docker logs campus
+### Optional Database Setup
+For persistent caching and better performance:
 
-================================================================================
-API ENDPOINTS - COPY & PASTE EXAMPLES
-================================================================================
-STUDENT SCHEDULE(MOSES TU BERLIN)
-----------------
-Response: List of student lectures with course name, instructor, location, and time schedule
-
-# Basic query with stupo and semester
-http://localhost:8000/api/student-schedule?stupo=24544&semester=2
-
-# Include past lectures (filter_dates=false)
-http://localhost:8000/api/student-schedule?stupo=24544&semester=2&filter_dates=false
-
-# All parameters
-http://localhost:8000/api/student-schedule?stupo=24544&semester=2&filter_dates=true
-
-WEATHER DATA
-------------
-Response: Current weather with temperature, description, icon URL, and air quality index
-
-# TU Berlin campus (default location - TU Berlin campus)
-http://localhost:8000/api/weather
-
-# Custom location with combined coordinates
-http://localhost:8000/api/weather?coords=52.520,13.405
-
-# Custom location with separate parameters
-http://localhost:8000/api/weather?lat=52.520&lon=13.405
-
-ROUTE PLANNING
---------------
-Response formats:
-- /routes: Detailed JSON with legs, transfers, platforms, delays
-- /pretty-routes: Simplified JSON with human-readable steps  
-- /raw-routes: Unprocessed BVG API response
-- Empty routes: {"routes":[]} for distances <200m
-
-# Basic route with coordinates as separate parameters
-http://localhost:8000/api/routes?from_lat=52.5133&from_lon=13.3247&to_lat=52.5147&to_lon=13.3149
-
-# Using combined coordinate format
-http://localhost:8000/api/routes?from=52.5133,13.3247&to=52.5147,13.3149
-
-# Pretty format (human-readable steps)
-http://localhost:8000/api/pretty-routes?from=52.5133,13.3247&to=52.5147,13.3149
-
-# Multiple route alternatives (1-5)
-http://localhost:8000/api/routes?from=52.5138,13.3266&to=52.5130,13.3217&results=3
-
-# Include intermediate stops
-http://localhost:8000/api/routes?from=52.5125,13.3270&to=52.5070,13.3321&stopovers=true
-
-# Specific departure time (ISO 8601)
-http://localhost:8000/api/routes?from=52.5141,13.3295&to=52.5053,13.3039&departure=2025-05-28T15:30:00%2B02:00
-
-# With public transport route geometry (polylines) for map visualization
-http://localhost:8000/api/routes?from=52.5133,13.3247&to=52.5147,13.3149&polylines=true
-
-# All parameters combined
-http://localhost:8000/api/routes?from=52.5141,13.3295&to=52.5053,13.3039&results=5&stopovers=true&departure=2025-05-28T09:00:00%2B02:00&polylines=true
-
-# Raw BVG API response (requires separate lat/lon)
-http://localhost:8000/api/raw-routes?from_lat=52.5133&from_lon=13.3247&to_lat=52.5147&to_lon=13.3149&results=2&stopovers=false
-
-BIKE SHARING (NEXTBIKE)
------------------------
-Response: List of bikes with provider, location, distance, vehicle_id
-
-# Basic query with separate lat/lon
-http://localhost:8000/api/bikes/nearby?lat=52.5125&lon=13.3270
-
-# Using combined coordinate format
-http://localhost:8000/api/bikes/nearby?coords=52.5130,13.3217
-
-# Custom radius in meters (10-2000)
-http://localhost:8000/api/bikes/nearby?lat=52.5125&lon=13.3270&radius=1000
-
-# Custom limit (1-20)
-http://localhost:8000/api/bikes/nearby?lat=52.5125&lon=13.3270&limit=20
-
-# All parameters
-http://localhost:8000/api/bikes/nearby?coords=52.5141,13.3295&radius=1500&limit=15
-
-PUBLIC TRANSPORT STATIONS
--------------------------
-Response: List of stations with name, distance, available transport types
-
-# Basic query with combined coordinates
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270
-
-# Using separate lat/lon parameters
-http://localhost:8000/api/nearest-stations?lat=52.5125&lon=13.3270
-
-# Custom number of results (1-10)
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270&results=10
-
-# Filter by single transport type
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270&transport_type=subway
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270&transport_type=bus
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270&transport_type=tram
-http://localhost:8000/api/nearest-stations?coords=52.5125,13.3270&transport_type=suburban
-
-# All parameters combined
-http://localhost:8000/api/nearest-stations?lat=52.5125&lon=13.3270&results=5&transport_type=bus
-
-MENSA MENUS
------------
-Response: Weekly menu with dishes grouped by category, prices, vegan/vegetarian flags
-
-# Get menu by mensa name (hardenbergstrasse|marchstrasse|veggie)
-http://localhost:8000/api/mensa/hardenbergstrasse/menu
-http://localhost:8000/api/mensa/marchstrasse/menu
-http://localhost:8000/api/mensa/veggie/menu
-
-# Force refresh (bypass cache)
-http://localhost:8000/api/mensa/hardenbergstrasse/menu?force_refresh=true
-
-# Get all menus in single request
-http://localhost:8000/api/mensa/all-menus
-
-# Get all menus with forced refresh
-http://localhost:8000/api/mensa/all-menus?force_refresh=true
-
-# List available mensa names
-http://localhost:8000/api/mensa/list
-
-# Refresh all menus (POST request - use curl or Postman)
-curl -X POST http://localhost:8000/api/mensa/refresh
-
-SYSTEM MONITORING
------------------
-# Health check (GET)
-http://localhost:8000/api/health
-
-# Cache statistics (GET)
-http://localhost:8000/api/cache/stats
-
-# Clean expired cache entries (POST)
-curl -X POST http://localhost:8000/api/cache/cleanup
-# PowerShell: Invoke-WebRequest -Method POST http://localhost:8000/api/cache/cleanup
-
-# Clear entire cache (DELETE)
-curl -X DELETE http://localhost:8000/api/cache/clear
-# PowerShell: Invoke-WebRequest -Method DELETE http://localhost:8000/api/cache/clear
-
-Note: 
-The service automatically runs health checks every 10 minutes for all core services. 
-Automatic switch between BVG and VBB provider on failure. 
-see the results in http://localhost:8000/api/health
-
-DATABASE (OPTIONAL)
-------------------
-The API can use PostgreSQL for persistent storage of mensa menus and student schedules.
-Without database: Data cached in memory only, cleared on restart
-With database: Persistent cache, faster subsequent requests
-
-Required environment variables:
-DB_HOST=localhost
-DB_PORT=5432  
-DB_NAME=campus_router
-DB_USER=campus_user
-DB_PASSWORD=campus_pass
-
-Docker with database:
+```bash
 docker run -d -p 8000:8000 \
   -e OPENWEATHER_API_KEY="your_key_here" \
   -e DB_HOST="your_postgres_host" \
+  -e DB_NAME="campus_router" \
+  -e DB_USER="campus_user" \
   -e DB_PASSWORD="your_db_password" \
   --name campus tu-router
+```
 
-Database stores: Mensa menus (1 week cache), Student schedules (2 week cache)
-Health check: http://localhost:8000/api/database/health
-================================================================================
-API PARAMETERS REFERENCE
-================================================================================
-WEATHER:
-- coords: "lat,lon" OR use lat + lon separately
-- Default location: TU Berlin campus (52.512, 13.327)
-- Response includes: temperature (°C), description, icon URL, air quality index (1-5)
+### Environment Variables
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENWEATHER_API_KEY` | ✅ | Free API key from OpenWeatherMap |
+| `DB_HOST` | ❌ | PostgreSQL host for persistent storage |
+| `DB_PORT` | ❌ | Database port (default: 5432) |
+| `DB_NAME` | ❌ | Database name (default: campus_router) |
+| `DB_USER` | ❌ | Database user (default: campus_user) |
+| `DB_PASSWORD` | ❌ | Database password |
 
-ROUTES:
-- from: "lat,lon" OR use from_lat + from_lon separately
-- to: "lat,lon" OR use to_lat + to_lon separately  
-- results: 1-5 (number of route alternatives)
-- stopovers: true|false (include intermediate stops)
-- departure: ISO 8601 datetime with timezone
+## 🔧 Development
 
-BIKES:
-- coords: "lat,lon" OR use lat + lon separately
-- radius: 10-2000 meters (search area)
-- limit: 1-20 (max bikes to return)
+### Project Structure
+```
+├── api/                    # API models and endpoints
+├── providers/             # External service integrations
+│   ├── bvg.py            # BVG/VBB transport API
+│   ├── nextbike.py       # Bike sharing
+│   ├── weather.py        # Weather service
+│   ├── mensa.py          # Cafeteria menus
+│   └── moses.py          # Student schedules
+├── database/             # Database models and services
+├── utils/                # Utilities (caching, geocoding)
+└── main.py              # FastAPI application
+```
 
-STATIONS:
-- coords: "lat,lon" OR use lat + lon separately
-- results: 1-10 (number of stations)
-- transport_type: subway|bus|tram|suburban
+### Local Development
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-MENSA:
-- force_refresh: true|false (bypass cache)
+# Set environment variables
+export OPENWEATHER_API_KEY="your_key_here"
 
-================================================================================
-TECHNICAL NOTES
-================================================================================
-- Weather API requires OpenWeatherMap API key (free: https://openweathermap.org/api)
-- Air Quality Index: 1=Good, 2=Fair, 3=Moderate, 4=Poor, 5=Very Poor
-- Weather icons: Direct URLs to OpenWeatherMap icon images
-- Maximum route duration: 30 minutes
-- Coordinate format: Decimal degrees (WGS84)
-- Time format: ISO 8601 with timezone
-- Cache TTL: Routes 5min, Bikes 30s, Mensa 1 week
-- First mensa request: ~20s (browser startup)
-- API documentation: http://localhost:8000/docs
-- OpenAPI schema: http://localhost:8000/openapi.json
-- Scope: Campus area routes (Scenario A)
+# Run development server
+python main.py
+```
 
-================================================================================
+## 📊 Monitoring & Health
+
+### Health Check
+```bash
+# System health overview
+GET /api/health
+
+# Database health (if configured)
+GET /api/database/health
+
+# Cache statistics
+GET /api/cache/stats
+```
+
+### Cache Management
+```bash
+# View cache statistics
+GET /api/cache/stats
+
+# Clean expired entries
+POST /api/cache/cleanup
+
+# Clear all caches (use carefully)
+DELETE /api/cache/clear
+```
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+**API Returns Empty Routes**
+- Routes under 200m walking distance return `{"routes":[]}`
+- Check coordinates are within Berlin/Brandenburg area
+- Verify departure time is in the future
+
+**Weather API Not Working**
+- Ensure `OPENWEATHER_API_KEY` is set correctly
+- Check your API key quota at OpenWeatherMap dashboard
+- Verify key has current weather access enabled
+
+**Slow Mensa Requests**
+- First request takes ~20s (Playwright browser startup)
+- Subsequent requests are cached for 1 week
+- Use `force_refresh=true` to update stale data
+
+**Database Connection Issues**
+- API works without database (memory-only caching)
+- Check database credentials and network connectivity
+- Review logs: `docker logs campus`
+
+### Performance Tips
+- Use combined coordinate format: `coords=lat,lon` instead of separate parameters
+- Enable database for persistent caching across restarts
+- Monitor cache hit rates via `/api/cache/stats`
+- Routes are cached for 5 minutes, bikes for 30 seconds
+
+## 🎓 Academic Context
+
+This project was developed for the **Programmierpraktikum at Scalable Software Systems (PP3S)** at TU Berlin, Summer Semester 2025, implementing **Scenario A: The TU Runner** - a campus route planning system.
+
+### Assignment Requirements Met
+- ✅ Distributed system (frontend/backend/database)
+- ✅ Path finding
+- ✅ Intermediate stops support
+- ✅ Route storage and caching
+- ✅ Pre-calculated route options
+- ✅ Location favorites and categories
+- ✅ Multiple external APIs (BVG, NextBike, OpenWeather, etc.)
+- ✅ Docker containerization
+- ✅ Scalability strategy documentation
+
+## 📄 API Documentation
+
+- **Interactive Docs**: http://localhost:8000/docs
+- **OpenAPI Schema**: http://localhost:8000/openapi.json
+- **Redoc**: http://localhost:8000/redoc
+
+## 📝 License & Contributing
+
+This project is part of academic coursework at TU Berlin. For questions or contributions, please contact the development team.
+
+Contributing
+# Fork the repository on GitHub
+
+# Clone your fork
+git clone https://github.com/your-username/tu-berlin-campus-router.git
+
+# Create a feature branch
+git checkout -b feature/your-feature-name
+
+# Make your changes and test
+docker-compose up --build
+
+# Commit and push
+git commit -m "Add your feature"
+git push origin feature/your-feature-name
+
+# Create a Pull Request on GitHub
+Deployment
+
+For production deployment, consider:
+Using environment-specific configuration
+Setting up proper logging and monitoring
+Implementing rate limiting
+Using a reverse proxy (nginx)
+Database backup strategies
+
+---
+
+**🔗 Quick Links**: [Interactive API Docs](http://localhost:8000/docs) | [Health Check](http://localhost:8000/api/health) | [Cache Stats](http://localhost:8000/api/cache/stats)
