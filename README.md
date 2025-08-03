@@ -314,10 +314,10 @@ git push origin feature/your-feature-name
 Deployment
 For production deployment, consider:
 
-Using environment-specific configuration
-Setting up proper logging and monitoring
-Implementing rate limiting
-Using a reverse proxy (nginx)
+Using environment-specific configuration,
+Setting up proper logging and monitoring,
+Implementing rate limiting,
+Using a reverse proxy (nginx),
 Database backup strategies
 
 ---
