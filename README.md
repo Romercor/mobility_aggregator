@@ -1,4 +1,4 @@
-# 🚀 TU Berlin Campus Router API
+# TU Berlin Campus Router API
 
 [![API Status](https://img.shields.io/badge/API-Active-green)](http://localhost:8000/docs)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://hub.docker.com/)
