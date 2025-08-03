@@ -5,6 +5,7 @@
 [![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-orange)](http://localhost:8000/docs)
 
 A comprehensive mobility aggregation API for TU Berlin campus, providing route planning, public transport information, bike sharing, weather data, mensa menus, and student schedules.
+(Group D - Scenario A)
 
 ## 🎯 Quick Start
 
