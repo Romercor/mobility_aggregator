@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any, List
 import datetime
 import httpx
 from api.models import RouteResponse, PrettyRouteResponse, BikeResponse, NearestStationResponse
-from providers.RoomSchedule import get_room_schedule
+from providers.RoomSchedule import RoomScheduleProvider
 from providers.bvg import BvgProvider
 from providers.nextbike import NextBikeProvider
 from api.models import MenuResponse, WeeklyMenu
@@ -698,17 +698,29 @@ async def get_current_weather(
 
 
 @router.get("/room_schedule", response_model=List[RoomEvent])
-async def room_schedule(
-    room_number: str = Query(..., description="Номер аудитории"),
+async def api_room_schedule(
+    room_number: str = Query(..., description="ID аудитории (например, raum77)"),
     date: str = Query(..., description="Дата в формате YYYY-MM-DD")
 ):
-    import asyncio
-    loop = asyncio.get_event_loop()
+    """
+    Получить расписание для указанной аудитории на конкретную дату.
+    """
     try:
-        events = await loop.run_in_executor(None, get_room_schedule, room_number, date)
-        return events
+        async with RoomScheduleProvider() as provider:
+            events = await provider.get_room_schedule(room_number, date)
+
+        if not events:
+            return []
+
+        # Преобразуем словари в объекты RoomEvent
+        return [RoomEvent(**event) for event in events]
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка при получении расписания: {str(e)}"
+        )
+
     
 @router.get("/student-schedule", response_model=StudentScheduleResponse)
 async def get_student_schedule(

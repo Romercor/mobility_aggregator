@@ -1,98 +1,110 @@
-import requests
+# providers/room.py
+from typing import List, Dict, Any, Optional
+from datetime import datetime
 from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
+from providers.moses import StudentScheduleProvider  # наследуемся, чтобы переиспользовать парсинг
 
+class RoomScheduleProvider(StudentScheduleProvider):
+    """Provider for TU Berlin room schedule (single day view)"""
 
-def get_room_schedule(room_number, date):
-    #date_obj = datetime.strptime(date, "%Y-%m-%d") - timedelta(days=1)  # уменьшение даты
-    #date = date_obj.strftime("%Y-%m-%d")
-    session = requests.Session()
-    base_url = "https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html"
-    date_input = datetime.strptime(date, "%Y-%m-%d").strftime("%d.%m.%Y")
+    def generate_url(self, room_id: str, date: str) -> str:
+        """
+        Build the URL for the room schedule.
+        Example:
+        https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html
+        ?location=raum77&search=true&calendartab=SINGLE_DAY&farbgebung=RAUM&singleday=2025-10-31
+        """
+        base_url = "https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html"
+        params = [
+            f"location={room_id}",
+            "search=true",
+            "calendartab=SINGLE_DAY",
+            "farbgebung=RAUM",
+            f"singleday={date}",
+            "ausweichtermine=true",
+            "einzeltermine=true",
+            "bereitungsdauern=false"
+        ]
+        return f"{base_url}?" + "&".join(params)
 
-    params = {"location": f"raum{room_number}",
-              "search": "true",
-              "calendartab": "SINGLE_DAY",
-              "dateforweek": date,
-              "singleday": date}
-    resp = session.get(base_url, params=params)
-    with open(f"debug_get_{room_number}_{date}.html", "w", encoding="utf-8") as f:
-        f.write(resp.text)
-    soup = BeautifulSoup(resp.text, "html.parser")
-    vs_tag = soup.find("input", {"name": "javax.faces.ViewState"})
-    if not vs_tag:
-        return []
-    view_state = vs_tag["value"]
+    def parse_room_schedule_from_html(self, html_content: str) -> List[Dict[str, Any]]:
+        """
+        Парсинг расписания комнаты (SINGLE_DAY) с извлечением названия, лектора, времени и аудитории.
+        Работает и при наличии data-content, и когда данные спрятаны в DOM.
+        """
+        soup = BeautifulSoup(html_content, 'html.parser')
+        lectures = []
 
-    single_day_input = soup.find("input", {"name": re.compile(r".*single-day-date_date$")})
-    if not single_day_input:
-        return []
-    match = re.match(r"(.*):single-day-date_date", single_day_input["name"])
-    if not match:
-        return []
-    form_id = match.group(1)
+        events = soup.find_all("div", class_="moses-calendar-event-wrapper")
+        for event in events:
+            try:
+                # Название предмета
+                title_el = event.find("a", attrs={"data-testid": "veranstaltung-name"})
+                title = title_el.get_text(strip=True) if title_el else None
 
-    headers = {
-        "Faces-Request": "partial/ajax",
-        "X-Requested-With": "XMLHttpRequest",
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-    }
-    data = {
-        "javax.faces.partial.ajax": "true",
-        "javax.faces.source": f"{form_id}:j_idt4953",
-        "javax.faces.partial.execute": f"{form_id}:j_idt4953 {form_id}:calendar",
-        "javax.faces.partial.render": f"{form_id}:calendar-including-filter",
-        f"{form_id}:j_idt4953": f"{form_id}:j_idt4953",
-        "javax.faces.ViewState": view_state,
-        f"{form_id}:single-day-date_input": date_input,
-        f"{form_id}:single-day-date": date_input,
-        f"{form_id}:single-day-date_date": date_input
-    }
-    resp = session.post(base_url, params=params, headers=headers, data=data)
-    with open(f"debug_post1_{room_number}_{date}.xml", "w", encoding="utf-8") as f:
-        f.write(resp.text)
-    soup = BeautifulSoup(resp.text, "xml")
-    vs_update = soup.find("update", {"id": re.compile(r".*ViewState$")})
-    if vs_update:
-        view_state = vs_update.text
+                lecturer = None
+                datetime_text = None
+                room = None
 
-    data = {
-        "javax.faces.partial.ajax": "true",
-        "javax.faces.source": f"{form_id}:j_idt4957",
-        "javax.faces.partial.execute": f"{form_id}:j_idt4957 {form_id}:calendar",
-        "javax.faces.partial.render": f"{form_id}:calendar-including-filter",
-        f"{form_id}:j_idt4957": f"{form_id}:j_idt4957",
-        "javax.faces.ViewState": view_state,
-        f"{form_id}:single-day-date_input": date_input,
-        f"{form_id}:single-day-date": date_input,
-        f"{form_id}:single-day-date_date": date_input,
-    }
-    resp = session.post(base_url, params=params, headers=headers, data=data)
-    with open(f"debug_post2_{room_number}_{date}.xml", "w", encoding="utf-8") as f:
-        f.write(resp.text)
-    soup = BeautifulSoup(resp.text, "xml")
-    upd_tag = soup.find("update", {"id": f"{form_id}:calendar-including-filter"})
-    if not upd_tag:
-        return []
+                # Блок с подробной информацией
+                popover_anchor = event.find("span", class_="popover-anchor")
+                if popover_anchor:
+                    # Если есть data-content — парсим его
+                    if popover_anchor.has_attr("data-content"):
+                        popover_html = BeautifulSoup(popover_anchor["data-content"], "html.parser")
+                    else:
+                        # Если data-content нет — берём сразу вложенный HTML
+                        popover_html = popover_anchor
 
-    schedule_soup = BeautifulSoup(upd_tag.text, "html.parser")
-    events = []
-    for div in schedule_soup.find_all("div", class_="moses-calendar-event-wrapper"):
-        item = {}
-        title_tag = div.find("a", {"data-testid": "veranstaltung-name"})
-        if title_tag:
-            item["title"] = title_tag.get_text(strip=True)
-        datetime_label = div.find("label", string="Datum/Uhrzeit")
-        if datetime_label and datetime_label.parent:
-            item["datetime"] = datetime_label.parent.find_next("br").next_sibling.strip()
-        room_label = div.find("label", string="Ort")
-        if room_label and room_label.parent:
-            item["room"] = room_label.parent.find_next("br").next_sibling.strip()
-        lecturer_label = div.find("label", string="Dozierende")
-        if lecturer_label and lecturer_label.parent:
-            item["lecturer"] = lecturer_label.parent.find_next("br").next_sibling.strip()
-        if item:
-            events.append(item)
+                    for fg in popover_html.find_all("div", class_="form-group"):
+                        label = fg.find("label")
+                        if not label:
+                            continue
+                        label_text = label.get_text(strip=True)
+                        value_text = fg.get_text(strip=True).replace(label_text, "").strip()
+                        if "Dozierende" in label_text:
+                            lecturer = value_text
+                        elif "Datum/Uhrzeit" in label_text:
+                            datetime_text = value_text
+                        elif "Ort" in label_text:
+                            room = value_text
 
-    return events
+                # Фоллбек на видимые элементы
+                if not lecturer:
+                    lect_small = event.find_all("small", class_="ellipsis")
+                    for small in lect_small:
+                        if small.find("a") and "," in small.get_text():
+                            lecturer = small.get_text(strip=True)
+                            break
+
+                if not room:
+                    loc_small = event.find("small", {"data-testid": "ort"})
+                    if loc_small:
+                        room = loc_small.get_text(strip=True)
+
+                lectures.append({
+                    "title": title,
+                    "datetime": datetime_text,
+                    "room": room,
+                    "lecturer": lecturer
+                })
+
+            except Exception as e:
+                print(f"Error parsing room event: {e}")
+                continue
+
+        return lectures
+
+    async def get_room_schedule(
+        self,
+        room_id: str,
+        date: str
+    ) -> List[Dict[str, Any]]:
+        """
+        Fetch and parse the room schedule for a given date.
+        """
+        url = self.generate_url(room_id, date)
+        html_content = await self.fetch_page_async(url)
+        if not html_content:
+            return []
+        return self.parse_room_schedule_from_html(html_content)

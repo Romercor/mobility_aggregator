@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head id="j_idt23">
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <meta id="mosesMeta" data-server_url="https://moseskonto.tu-berlin.de/moses" />
+        <script type="text/javascript">
+            const { server_url } = document.getElementById("mosesMeta").dataset
+            window.serverUrl = server_url /*_*/
+
+            /*_*/
+            window.getResourceRootPath = (match, idx, string) => {
+                // replace '/@resource/' with:
+                return window.serverUrl + "/javax.faces.resource/"
+            }
+
+            async function writeClipboard (elemSelector) {
+                const elem = document.querySelector(elemSelector)
+                if (!elem) {
+                    console.error("element $(\"", elemSelector, "\") not found!", alert("⚠ Fehler"))
+                } else if (await writeClipboardText(elem.value || elem.textContent)) !elem.select || elem.select()
+            }
+
+            async function writeClipboardText (text) {
+                try {
+                    await navigator.clipboard.writeText(text)
+                    return true
+                } catch (error) {
+                    prompt("⚠ Fehler: Text konnte nicht kopiert werden!", text)
+                    console.error("failed to write to clipboard!", error.message)
+                }
+            }
+        </script>
+        <noscript>
+            <meta http-equiv="refresh" content="0;url=https://moseskonto.tu-berlin.de/moses/error/noscript.html" />
+        </noscript><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/theme.css.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces-bootstrap&amp;v=12.0.0&amp;e=12.0.0" /><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/primeicons/primeicons.css.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/jsf.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=javax.faces&amp;stage=Development"></script><script type="text/javascript" src="/moses/javax.faces.resource/omnifaces.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=omnifaces&amp;v=3.14.1"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/components.css.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/jquery/jquery.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/jquery/jquery-plugins.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/core.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/components.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/toggleswitch/toggleswitch.css.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/toggleswitch/toggleswitch.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/touch/touchswipe.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/texteditor/texteditor.css.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/texteditor/texteditor.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/filedownload/filedownload.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/shared.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/style.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/main.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/bootstrap.min.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=js"></script><script type="text/javascript" src="/moses/javax.faces.resource/primefaces-locale.min.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=js"></script><script type="text/javascript" src="/moses/javax.faces.resource/html2pdf.min.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=js"></script><script type="text/javascript">if(window.PrimeFaces){PrimeFaces.settings.locale='de';PrimeFaces.settings.viewId='/verzeichnis/veranstaltungen/raum.xhtml';PrimeFaces.settings.contextPath='/moses';PrimeFaces.settings.cookiesSecure=false;PrimeFaces.settings.projectStage='Development';}</script>
+
+    <title>Moses - 
+        Ansicht nach Raum
+    </title>
+
+    
+    <link rel="apple-touch-icon" href="/moses/docs/images/favicon/apple-touch-icon.png" sizes="180x180" />
+    <link rel="icon" type="image/png" href="/moses/docs/images/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/moses/docs/images/favicon/favicon-16x16.png" sizes="16x16" />
+    
+    <link crossorigin="use-credentials" rel="manifest" href="/moses/docs/images/favicon/manifest.json" />
+    <link rel="mask-icon" href="/moses/docs/images/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+    <link rel="shortcut icon" href="/moses/docs/images/favicon/favicon.ico" />
+    <meta name="msapplication-config" content="/moses/docs/images/favicon/browserconfig.xml" />
+
+    <meta name="theme-color" content="#2F76DF" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" /></head><body>
+<form id="defaultMessageForm" name="defaultMessageForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?jfwid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="defaultMessageForm" value="defaultMessageForm" />
+<div id="defaultMessageForm:defaultMessage">
+        <div class="container moses-growl ">
+
+        </div></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:0" value="6695508129290738745:-1684305906668208119" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:0" value="pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" autocomplete="off" />
+</form>
+<form id="confirmDialogForm" name="confirmDialogForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?jfwid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="confirmDialogForm" value="confirmDialogForm" />
+<div class="modal modal-confirm fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Abbrechen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-close"></span></button><h4 class="modal-title"><span class="modal-confirm-icon fa fa-fw fa-space fa-warning"></span><span class="modal-confirm-title">Bestätigung</span></h4></div><div class="modal-body"><p class="modal-confirm-message">Sind Sie sich sicher?</p></div><div class="modal-footer"><button type="button" class="btn btn-default modal-confirm-cancel" data-dismiss="modal"><span class="fa fa-space fa-times"></span><span>Abbrechen</span></button><button type="button" class="btn btn-danger modal-confirm-ok" data-dismiss="modal"><span class="fa fa-space fa-check"></span><span>OK</span></button></div></div></div></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:1" value="6695508129290738745:-1684305906668208119" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:1" value="pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" autocomplete="off" />
+</form>
+<form id="popupNotificationForm" name="popupNotificationForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?jfwid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="popupNotificationForm" value="popupNotificationForm" />
+<div id="popupNotificationForm:j_idt52" class="modal " aria-hidden="aria-hidden" tabindex="-1" role="dialog"><input id="popupNotificationForm:j_idt52_input" name="popupNotificationForm:j_idt52_input" hidden="true" value="ACCEPTED" onchange="Moses.Component.Modal.update('popupNotificationForm:j_idt52', event)" /><input id="popupNotificationForm:j_idt52_top" name="popupNotificationForm:j_idt52_top" hidden="true" value="" /><input id="popupNotificationForm:j_idt52_left" name="popupNotificationForm:j_idt52_left" hidden="true" value="" /><input id="popupNotificationForm:j_idt52_width" name="popupNotificationForm:j_idt52_width" hidden="true" value="" /><input id="popupNotificationForm:j_idt52_height" name="popupNotificationForm:j_idt52_height" hidden="true" value="" /><div class="modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" class="close btn" onclick="Moses.Component.Modal.decline('popupNotificationForm:j_idt52', event)" aria-label="Abbrechen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-close"></span></button><h4 class="modal-title"></h4></div><div class="modal-body"></div></div></div><script>Moses.Component.Modal.restore('popupNotificationForm:j_idt52', {'backdrop':'true','keyboard':true,'draggable':false,'dragged':false,'styleTop':'','styleLeft':'','resizable':false,'resized':false,'styleWidth':'','styleHeight':'','collapse':false,'show':false})</script></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:2" value="6695508129290738745:-1684305906668208119" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:2" value="pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" autocomplete="off" />
+</form>
+
+    <div id="loading-indicator"></div>
+
+    <header id="header">
+        <a href="https://moseskonto.tu-berlin.de/moses/index.html" id="header-logo">
+            <img src="/moses/docs/images/template/university-logo.svg" alt="Technische Universität Berlin Logo" />
+        </a>
+
+        <nav id="nav-top"></nav>
+    </header>
+
+    <div id="header-border"></div>
+
+
+    <aside id="aside">
+        <nav id="nav-aside"></nav>
+    </aside>
+
+    <main id="content" class="container-fluid"><div id="page-title" class="page-header">
+
+            <ol class="breadcrumb">
+                    <li><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/index.html">Vorlesungsverzeichnis (VVZ)</a>
+                    </li>
+                    <li><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/index.html">Veranstaltungssuche</a>
+                    </li>
+                    <li><a href=";jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto#">Nach Raum</a>
+                    </li>
+            </ol>
+
+            <h1>
+        Ansicht nach Raum <small></small>
+    
+            </h1></div>
+<form id="main-form" name="main-form" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?jfwid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="main-form" value="main-form" />
+<div>
+            <div class="row">
+                <div class="col-md-6"><div id="main-form:j_idt76:semester-picker:semester-repeat" style="width: 100%; overflow-x: auto;"><div>
+                <label>Semester</label><br />
+                <div class="form-group btn-group"><div id="main-form:j_idt76:semester-picker:j_idt81" class="btn-group null" data-testid="semester-picker-select-one-button"><div class="btn btn-default" tabindex="0" title=""><input id="main-form:j_idt76:semester-picker:j_idt81:0" name="main-form:j_idt76:semester-picker:j_idt81" type="radio" value="73" class="ui-helper-hidden-accessible" tabindex="-1" aria-required="true" />WiSe 2024/25</div><div class="btn btn-default" tabindex="0" title=""><input id="main-form:j_idt76:semester-picker:j_idt81:1" name="main-form:j_idt76:semester-picker:j_idt81" type="radio" value="74" class="ui-helper-hidden-accessible" tabindex="-1" aria-required="true" />SoSe 2025</div><div class="btn btn-default active" tabindex="0" title=""><input id="main-form:j_idt76:semester-picker:j_idt81:2" name="main-form:j_idt76:semester-picker:j_idt81" type="radio" value="75" class="ui-helper-hidden-accessible" tabindex="-1" checked="checked" aria-required="true" />WiSe 2025/26</div></div><script id="main-form:j_idt76:semester-picker:j_idt81_s" type="text/javascript">$(function(){PrimeFaces.cw("SelectOneButton","widget_main_form_j_idt76_semester_picker_j_idt81",{id:"main-form:j_idt76:semester-picker:j_idt81",behaviors:{change:function(ext,event) {PrimeFaces.ab({s:"main-form:j_idt76:semester-picker:j_idt81",e:"change",f:"main-form",p:"main-form:j_idt76:semester-picker:j_idt81",u:"main-form main-form:j_idt76:szenario-predicate main-form:j_idt76:semester-picker:semester-repeat"},ext);}}});});</script><a id="main-form:j_idt76:semester-picker:j_idt83" href="#" class="ui-commandlink ui-widget btn btn-default" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt76:semester-picker:j_idt83&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt76:semester-picker:j_idt83&quot;,u:&quot;main-form:j_idt76:semester-picker:semester-repeat&quot;,ps:true});return false;" data-testid="semester-picker-expand-button"><i>Mehr...</i>
+                    </a><script id="main-form:j_idt76:semester-picker:j_idt83_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt76_semester_picker_j_idt83",{id:"main-form:j_idt76:semester-picker:j_idt83"});});</script>
+                </div></div></div>
+                </div>
+
+                <div class="col-md-6">
+                </div>
+            </div>
+
+            
+            <script type="text/javascript">
+                $(document).on('click', '.dropdown-menu', function (e) {
+                    e.stopPropagation();
+                });
+            </script>
+
+            
+            <div id="extended-options-wrapper" data-testid="calendar-view-base-extended-options-wrapper">
+                <div class="row">
+                    <div class="col-md-6"><div class="form-group"><a id="main-form:j_idt76:btn-interval-predicate" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt76:btn-interval-predicate&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt76:btn-interval-predicate&quot;,u:&quot;main-form main-form:j_idt76:btn-interval-predicate main-form:j_idt76:semester-picker main-form:j_idt76:interval-selection&quot;,ps:true});return false;" data-testid="btn-interval-predicate"><span class="fa fam-uncollapse fa-space"></span>  <span> Genauen Zeitraum angeben </span> 
+                            </a><script id="main-form:j_idt76:btn-interval-predicate_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt76_btn_interval_predicate",{id:"main-form:j_idt76:btn-interval-predicate"});});</script></div>
+                    </div>
+                </div><div id="main-form:j_idt76:interval-selection" data-testid="calendar-view-base-interval-selection"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><a id="main-form:j_idt76:btn-extended" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt76:btn-extended&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt76:btn-extended&quot;,u:&quot;main-form main-form:j_idt76:btn-extended main-form:j_idt76:extended&quot;,ps:true});return false;" data-testid="btn-extended"><span class="fa fam-uncollapse fa-space"></span>  Erweiterte Optionen
+                                </a><script id="main-form:j_idt76:btn-extended_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt76_btn_extended",{id:"main-form:j_idt76:btn-extended"});});</script>
+                            </div>
+                        </div>
+                    </div><div id="main-form:j_idt76:extended"></div>
+            </div></div><div id="main-form:j_idt76:view-base-raum-aendern-modal"></div><div id="main-form:j_idt76:view-base-dozierende-modal"></div><div id="main-form:j_idt76:view-base-delete-modal"></div><div id="main-form:j_idt76:view-base-kommentar-modal"></div><div id="main-form:j_idt76:view-base-buchung-lve-modal"></div><div id="main-form:j_idt76:view-base-buchung-notiz-modal"></div><div id="main-form:j_idt76:view-base-label-modal"></div><div id="main-form:j_idt76:view-base-curriculum-conflicts-modal"></div>
+
+            <hr />
+            <label>Räume / Gebäude / Campus</label><div id="main-form:raum-autocomplete" class="ui-autocomplete ui-autocomplete-multiple form-control"><ul class="ui-autocomplete-multiple-container ui-widget ui-inputfield ui-state-default ui-corner-all"><li class="ui-autocomplete-input-token"><input type="text" id="main-form:raum-autocomplete_input" name="main-form:raum-autocomplete_input" autocomplete="off" placeholder="Räume auswählen..." data-testid="raum-autocomplete" /></li></ul><span id="main-form:raum-autocomplete_panel" class="ui-autocomplete-panel ui-widget-content ui-corner-all ui-helper-hidden ui-shadow ui-input-overlay" role="listbox" tabindex="-1"></span><select id="main-form:raum-autocomplete_hinput" name="main-form:raum-autocomplete_hinput" multiple="multiple" class="ui-helper-hidden-accessible" tabindex="-1" aria-hidden="true"></select></div><script id="main-form:raum-autocomplete_s" type="text/javascript">$(function(){PrimeFaces.cw("AutoComplete","widget_main_form_raum_autocomplete",{id:"main-form:raum-autocomplete",delay:300,multiple:true,appendTo:"@(body)",unique:true,queryMode:"server",moreText:"...",hasFooter:false,behaviors:{itemSelect:function(ext,event) {PrimeFaces.ab({s:"main-form:raum-autocomplete",e:"itemSelect",f:"main-form",p:"main-form:raum-autocomplete",u:"main-form page-title"},ext);},itemUnselect:function(ext,event) {PrimeFaces.ab({s:"main-form:raum-autocomplete",e:"itemUnselect",f:"main-form",p:"main-form:raum-autocomplete",u:"main-form page-title"},ext);}}});});</script>
+
+            
+            <script type="text/javascript">
+                function updateTokenColors () {
+                    on_update_command()
+                }
+
+                function setTokenColors () {
+                    const autocompleteId = "main-form:raum-autocomplete"
+                    const dict = JSON.parse(document.getElementById("main-form:location-autocomplete-style-json").value)
+                    Moses.Primefaces.Autocomplete.updateTokenColorsById(autocompleteId, dict)
+                }
+            </script><input id="main-form:location-autocomplete-style-json" type="hidden" name="main-form:location-autocomplete-style-json" value="" /><script id="main-form:on_update_command" type="text/javascript">on_update_command = function() {return PrimeFaces.ab({s:"main-form:on_update_command",f:"main-form",u:"main-form",pa:arguments[0]});}</script><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:3" value="6695508129290738745:-1684305906668208119" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:3" value="pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH:0" autocomplete="off" />
+</form>
+    </main>
+
+    <footer id="status">
+        <a href="http://www.innocampus.tu-berlin.de" target="_blank" class="status-item">
+            <img src="/moses/docs/images/template/operator-logo.png" alt="Logo von innoCampus" title="Moses wird betrieben durch innoCampus" />
+        </a>
+
+        <div class="status-item hidden-xs">
+            Version 6.05.348 (Realm 6.4.3)<br /> 
+        </div>
+
+        <div class="status-item justify-right">
+
+            <a href="http://www.tu.berlin/footer/impressum/" target="_blank"> Impressum </a> / <a href="/moses/credits.html"> Credits </a>
+        </div>
+    </footer>
+
+    <nav id="nav-bottom"></nav>
+
+
+    <script>
+        function ajaxStart () {
+            const indicator = document.getElementById("loading-indicator")
+            if (indicator) {
+                indicator.classList.add("loading")
+            }
+        }
+
+        function ajaxComplete () {
+            const indicator = document.getElementById("loading-indicator")
+            if (indicator) {
+                indicator.classList.remove("loading")
+            }
+        }
+    </script><div id="j_idt5474"></div><script id="j_idt5474_s" type="text/javascript">$(function(){PrimeFaces.cw("AjaxStatus","widget_j_idt5474",{id:"j_idt5474",delay:0,start:function(){ajaxStart();},complete:function(){ajaxComplete();}});});</script><script type="text/javascript" src="/moses/javax.faces.resource/nav.js.html;jsessionid=pww-1F8U6Hp8satHV5aJKaWjRAHjq6z4EIVwcMYH.moseskonto?ln=dist"></script><script type="text/javascript">OmniFaces.Unload.init('5618ccc4-782d-4c8c-9045-bbfff88335d2')</script><script type="text/javascript">$(function(){Moses.Util.UrlParam.remove('intervalStartDate');;Moses.Util.UrlParam.remove('intervalEndDate');;Moses.Util.UrlParam.remove('intervalStartTime');;Moses.Util.UrlParam.remove('intervalEndTime');;Moses.Util.UrlParam.remove('intervalIncludeWeekend');;});</script></body>
+</html>

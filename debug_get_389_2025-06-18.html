@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head id="j_idt22">
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <meta id="mosesMeta" data-server_url="https://moseskonto.tu-berlin.de/moses" />
+        <script type="text/javascript">
+            const { server_url } = document.getElementById("mosesMeta").dataset
+            window.serverUrl = server_url /*_*/
+
+            /*_*/
+            window.getResourceRootPath = (match, idx, string) => {
+                // replace '/@resource/' with:
+                return window.serverUrl + "/javax.faces.resource/"
+            }
+
+            async function writeClipboard (elemSelector) {
+                const elem = document.querySelector(elemSelector)
+                if (!elem) {
+                    console.error("element $(\"", elemSelector, "\") not found!", alert("⚠ Fehler"))
+                } else if (await writeClipboardText(elem.value || elem.textContent)) !elem.select || elem.select()
+            }
+
+            async function writeClipboardText (text) {
+                try {
+                    await navigator.clipboard.writeText(text)
+                    return true
+                } catch (error) {
+                    prompt("⚠ Fehler: Text konnte nicht kopiert werden!", text)
+                    console.error("failed to write to clipboard!", error.message)
+                }
+            }
+        </script>
+        <noscript>
+            <meta http-equiv="refresh" content="0;url=https://moseskonto.tu-berlin.de/moses/error/noscript.html" />
+        </noscript><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/theme.css.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces-bootstrap&amp;v=12.0.0&amp;e=12.0.0" /><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/primeicons/primeicons.css.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/jsf.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=javax.faces&amp;stage=Development"></script><script type="text/javascript" src="/moses/javax.faces.resource/omnifaces.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=omnifaces&amp;v=3.14.1"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/components.css.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/jquery/jquery.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/jquery/jquery-plugins.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/core.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/components.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/toggleswitch/toggleswitch.css.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/toggleswitch/toggleswitch.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/touch/touchswipe.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><link type="text/css" rel="stylesheet" href="/moses/javax.faces.resource/texteditor/texteditor.css.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0" /><script type="text/javascript" src="/moses/javax.faces.resource/texteditor/texteditor.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/filedownload/filedownload.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=primefaces&amp;v=12.0.0&amp;e=12.0.0"></script><script type="text/javascript" src="/moses/javax.faces.resource/shared.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/style.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/main.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=dist"></script><script type="text/javascript" src="/moses/javax.faces.resource/bootstrap.min.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=js"></script><script type="text/javascript" src="/moses/javax.faces.resource/primefaces-locale.min.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=js"></script><script type="text/javascript" src="/moses/javax.faces.resource/html2pdf.min.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=js"></script><script type="text/javascript">if(window.PrimeFaces){PrimeFaces.settings.locale='de';PrimeFaces.settings.viewId='/verzeichnis/veranstaltungen/raum.xhtml';PrimeFaces.settings.contextPath='/moses';PrimeFaces.settings.cookiesSecure=false;PrimeFaces.settings.projectStage='Development';}</script>
+
+    <title>Moses - 
+        Ansicht nach Raum
+    </title>
+
+    
+    <link rel="apple-touch-icon" href="/moses/docs/images/favicon/apple-touch-icon.png" sizes="180x180" />
+    <link rel="icon" type="image/png" href="/moses/docs/images/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/moses/docs/images/favicon/favicon-16x16.png" sizes="16x16" />
+    
+    <link crossorigin="use-credentials" rel="manifest" href="/moses/docs/images/favicon/manifest.json" />
+    <link rel="mask-icon" href="/moses/docs/images/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+    <link rel="shortcut icon" href="/moses/docs/images/favicon/favicon.ico" />
+    <meta name="msapplication-config" content="/moses/docs/images/favicon/browserconfig.xml" />
+
+    <meta name="theme-color" content="#2F76DF" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" /></head><body>
+<form id="defaultMessageForm" name="defaultMessageForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?jfwid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="defaultMessageForm" value="defaultMessageForm" />
+<div id="defaultMessageForm:defaultMessage">
+        <div class="container moses-growl ">
+
+        </div></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:0" value="5834880724512351452:5940170970813731042" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:0" value="FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" autocomplete="off" />
+</form>
+<form id="confirmDialogForm" name="confirmDialogForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?jfwid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="confirmDialogForm" value="confirmDialogForm" />
+<div class="modal modal-confirm fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Abbrechen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-close"></span></button><h4 class="modal-title"><span class="modal-confirm-icon fa fa-fw fa-space fa-warning"></span><span class="modal-confirm-title">Bestätigung</span></h4></div><div class="modal-body"><p class="modal-confirm-message">Sind Sie sich sicher?</p></div><div class="modal-footer"><button type="button" class="btn btn-default modal-confirm-cancel" data-dismiss="modal"><span class="fa fa-space fa-times"></span><span>Abbrechen</span></button><button type="button" class="btn btn-danger modal-confirm-ok" data-dismiss="modal"><span class="fa fa-space fa-check"></span><span>OK</span></button></div></div></div></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:1" value="5834880724512351452:5940170970813731042" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:1" value="FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" autocomplete="off" />
+</form>
+<form id="popupNotificationForm" name="popupNotificationForm" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?jfwid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="popupNotificationForm" value="popupNotificationForm" />
+<div id="popupNotificationForm:j_idt48" class="modal " aria-hidden="aria-hidden" tabindex="-1" role="dialog"><input id="popupNotificationForm:j_idt48_input" name="popupNotificationForm:j_idt48_input" hidden="true" value="ACCEPTED" onchange="Moses.Component.Modal.update('popupNotificationForm:j_idt48', event)" /><input id="popupNotificationForm:j_idt48_top" name="popupNotificationForm:j_idt48_top" hidden="true" value="" /><input id="popupNotificationForm:j_idt48_left" name="popupNotificationForm:j_idt48_left" hidden="true" value="" /><input id="popupNotificationForm:j_idt48_width" name="popupNotificationForm:j_idt48_width" hidden="true" value="" /><input id="popupNotificationForm:j_idt48_height" name="popupNotificationForm:j_idt48_height" hidden="true" value="" /><div class="modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" class="close btn" onclick="Moses.Component.Modal.decline('popupNotificationForm:j_idt48', event)" aria-label="Abbrechen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-close"></span></button><h4 class="modal-title"></h4></div><div class="modal-body"></div></div></div><script>Moses.Component.Modal.restore('popupNotificationForm:j_idt48', {'backdrop':'true','keyboard':true,'draggable':false,'dragged':false,'styleTop':'','styleLeft':'','resizable':false,'resized':false,'styleWidth':'','styleHeight':'','collapse':false,'show':false})</script></div><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:2" value="5834880724512351452:5940170970813731042" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:2" value="FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" autocomplete="off" />
+</form>
+
+    <div id="loading-indicator"></div>
+
+    <header id="header">
+        <a href="https://moseskonto.tu-berlin.de/moses/index.html" id="header-logo">
+            <img src="/moses/docs/images/template/university-logo.svg" alt="Technische Universität Berlin Logo" />
+        </a>
+
+        <nav id="nav-top"></nav>
+    </header>
+
+    <div id="header-border"></div>
+
+
+    <aside id="aside">
+        <nav id="nav-aside"></nav>
+    </aside>
+
+    <main id="content" class="container-fluid"><div id="page-title" class="page-header">
+
+            <ol class="breadcrumb">
+                    <li><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/index.html">Vorlesungsverzeichnis (VVZ)</a>
+                    </li>
+                    <li><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/index.html">Veranstaltungssuche</a>
+                    </li>
+                    <li><a href=";jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto#">Nach Raum</a>
+                    </li>
+            </ol>
+
+            <h1>
+        Ansicht nach Raum <small>MAR 0.002</small>
+    
+            </h1></div>
+<form id="main-form" name="main-form" method="post" action="/moses/verzeichnis/veranstaltungen/raum.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?jfwid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="main-form" value="main-form" />
+<div>
+            <div class="row">
+                <div class="col-md-6"><div id="main-form:j_idt72:semester-picker:semester-repeat" style="width: 100%; overflow-x: auto;"><div>
+                <label>Semester</label><br />
+                <div class="form-group btn-group"><div id="main-form:j_idt72:semester-picker:j_idt77" class="btn-group null" data-testid="semester-picker-select-one-button"><div class="btn btn-default" tabindex="0" title=""><input id="main-form:j_idt72:semester-picker:j_idt77:0" name="main-form:j_idt72:semester-picker:j_idt77" type="radio" value="73" class="ui-helper-hidden-accessible" tabindex="-1" aria-required="true" />WiSe 2024/25</div><div class="btn btn-default active" tabindex="0" title=""><input id="main-form:j_idt72:semester-picker:j_idt77:1" name="main-form:j_idt72:semester-picker:j_idt77" type="radio" value="74" class="ui-helper-hidden-accessible" tabindex="-1" checked="checked" aria-required="true" />SoSe 2025</div><div class="btn btn-default disabled ui-state-disabled" tabindex="0" title="Verfügbar ab 01.08.2025"><input id="main-form:j_idt72:semester-picker:j_idt77:2" name="main-form:j_idt72:semester-picker:j_idt77" type="radio" value="75" class="ui-helper-hidden-accessible" tabindex="-1" aria-required="true" />WiSe 2025/26</div></div><script id="main-form:j_idt72:semester-picker:j_idt77_s" type="text/javascript">$(function(){PrimeFaces.cw("SelectOneButton","widget_main_form_j_idt72_semester_picker_j_idt77",{id:"main-form:j_idt72:semester-picker:j_idt77",behaviors:{change:function(ext,event) {PrimeFaces.ab({s:"main-form:j_idt72:semester-picker:j_idt77",e:"change",f:"main-form",p:"main-form:j_idt72:semester-picker:j_idt77",u:"main-form main-form:j_idt72:szenario-predicate main-form:j_idt72:semester-picker:semester-repeat"},ext);}}});});</script><a id="main-form:j_idt72:semester-picker:j_idt79" href="#" class="ui-commandlink ui-widget btn btn-default" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt72:semester-picker:j_idt79&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt72:semester-picker:j_idt79&quot;,u:&quot;main-form:j_idt72:semester-picker:semester-repeat&quot;,ps:true});return false;" data-testid="semester-picker-expand-button"><i>Mehr...</i>
+                    </a><script id="main-form:j_idt72:semester-picker:j_idt79_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt72_semester_picker_j_idt79",{id:"main-form:j_idt72:semester-picker:j_idt79"});});</script>
+                </div></div></div>
+                </div>
+
+                <div class="col-md-6">
+                </div>
+            </div>
+
+            
+            <script type="text/javascript">
+                $(document).on('click', '.dropdown-menu', function (e) {
+                    e.stopPropagation();
+                });
+            </script>
+
+            
+            <div id="extended-options-wrapper" data-testid="calendar-view-base-extended-options-wrapper">
+                <div class="row">
+                    <div class="col-md-6"><div class="form-group"><a id="main-form:j_idt72:btn-interval-predicate" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt72:btn-interval-predicate&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt72:btn-interval-predicate&quot;,u:&quot;main-form main-form:j_idt72:btn-interval-predicate main-form:j_idt72:semester-picker main-form:j_idt72:interval-selection&quot;,ps:true});return false;" data-testid="btn-interval-predicate"><span class="fa fam-uncollapse fa-space"></span>  <span> Genauen Zeitraum angeben </span> 
+                            </a><script id="main-form:j_idt72:btn-interval-predicate_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt72_btn_interval_predicate",{id:"main-form:j_idt72:btn-interval-predicate"});});</script></div>
+                    </div>
+                </div><div id="main-form:j_idt72:interval-selection" data-testid="calendar-view-base-interval-selection"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group"><a id="main-form:j_idt72:btn-extended" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt72:btn-extended&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt72:btn-extended&quot;,u:&quot;main-form main-form:j_idt72:btn-extended main-form:j_idt72:extended&quot;,ps:true});return false;" data-testid="btn-extended"><span class="fa fam-uncollapse fa-space"></span>  Erweiterte Optionen
+                                </a><script id="main-form:j_idt72:btn-extended_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt72_btn_extended",{id:"main-form:j_idt72:btn-extended"});});</script>
+                            </div>
+                        </div>
+                    </div><div id="main-form:j_idt72:extended"></div>
+            </div></div><div id="main-form:j_idt72:view-base-raum-aendern-modal"></div><div id="main-form:j_idt72:view-base-dozierende-modal"></div><div id="main-form:j_idt72:view-base-delete-modal"></div><div id="main-form:j_idt72:view-base-kommentar-modal"></div><div id="main-form:j_idt72:view-base-buchung-lve-modal"></div><div id="main-form:j_idt72:view-base-buchung-notiz-modal"></div><div id="main-form:j_idt72:view-base-label-modal"></div><div id="main-form:j_idt72:view-base-curriculum-conflicts-modal"></div>
+
+            <hr />
+            <label>Räume / Gebäude / Campus</label><div id="main-form:raum-autocomplete" class="ui-autocomplete ui-autocomplete-multiple form-control"><ul class="ui-autocomplete-multiple-container ui-widget ui-inputfield ui-state-default ui-corner-all"><li data-token-value="raum389" class="ui-autocomplete-token ui-state-active ui-corner-all"><span class="ui-autocomplete-token-label">MAR 0.002</span><span class="ui-autocomplete-token-icon ui-icon ui-icon-close"></span></li><li class="ui-autocomplete-input-token"><input type="text" id="main-form:raum-autocomplete_input" name="main-form:raum-autocomplete_input" autocomplete="off" placeholder="Räume auswählen..." data-testid="raum-autocomplete" /></li></ul><span id="main-form:raum-autocomplete_panel" class="ui-autocomplete-panel ui-widget-content ui-corner-all ui-helper-hidden ui-shadow ui-input-overlay" role="listbox" tabindex="-1"></span><select id="main-form:raum-autocomplete_hinput" name="main-form:raum-autocomplete_hinput" multiple="multiple" class="ui-helper-hidden-accessible" tabindex="-1" aria-hidden="true"><option value="raum389" selected="selected"></option></select></div><script id="main-form:raum-autocomplete_s" type="text/javascript">$(function(){PrimeFaces.cw("AutoComplete","widget_main_form_raum_autocomplete",{id:"main-form:raum-autocomplete",delay:300,multiple:true,appendTo:"@(body)",unique:true,queryMode:"server",moreText:"...",hasFooter:false,behaviors:{itemSelect:function(ext,event) {PrimeFaces.ab({s:"main-form:raum-autocomplete",e:"itemSelect",f:"main-form",p:"main-form:raum-autocomplete",u:"main-form page-title"},ext);},itemUnselect:function(ext,event) {PrimeFaces.ab({s:"main-form:raum-autocomplete",e:"itemUnselect",f:"main-form",p:"main-form:raum-autocomplete",u:"main-form page-title"},ext);}}});});</script><div id="main-form:search-results" data-testid="search-results">
+
+                <hr />
+                <h2>Ergebnisse</h2>
+        <div id="main-form:j_idt4829">
+
+            <div id="calendar-point"><div id="main-form:j_idt4829:calendar-including-warnings"><div id="main-form:j_idt4829:calendar-including-filter"><div style="line-height: 41px;" class="pull-right"><span class="" id="main-form:j_idt4829:j_idt4843:j_idt4844" style="" data-toggle="popover" data-animation="true" data-container="body" data-delay="0" data-trigger="hover" data-placement="left" data-collision="null" data-hide-others="false" data-popover-class="tab-calendar-key-popover" data-popover-style=""><div class="title" style="display: none">Legende der Farbgebungen<div class="clearfix"></div></div><div class="content" style="display: none">
+                <div class="row"><div class="col-md-6">
+                        <div class="form-group">
+                            <label>Lehrformat</label><br />
+                            Jedes Format bekommt eine Farbe
+                        </div></div><div class="col-md-6">
+                        <div class="form-group">
+                            <label>Raum</label> (Nur Ansicht nach Raum)<br /> Jeder Raum bekommt eine Farbe
+                        </div></div>
+                </div></div>
+            <a><span class="fa fa-map-o fa-space"></span>Legende</a></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:j_idt4843:j_idt4844')</script></div><ul style="width: calc(100% - 90px);" class="nav nav-tabs"><li class=""><a id="main-form:j_idt4829:j_idt4870" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4870&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4870&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;});return false;">
+                                        Semester
+                                    </a><script id="main-form:j_idt4829:j_idt4870_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4870",{id:"main-form:j_idt4829:j_idt4870"});});</script></li><li class=""><a id="main-form:j_idt4829:j_idt4873" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4873&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4873&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;});return false;">
+                                        Einzelne Woche
+                                    </a><script id="main-form:j_idt4829:j_idt4873_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4873",{id:"main-form:j_idt4829:j_idt4873"});});</script></li><li class="active"><a id="main-form:j_idt4829:j_idt4876" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4876&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4876&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;});return false;">
+                                        Einzelner Tag
+                                    </a><script id="main-form:j_idt4829:j_idt4876_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4876",{id:"main-form:j_idt4829:j_idt4876"});});</script></li><li class=""><a id="main-form:j_idt4829:j_idt4879" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4879&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4879&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;});return false;">
+                                        Benutzerdefinierter Zeitraum
+                                    </a><script id="main-form:j_idt4829:j_idt4879_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4879",{id:"main-form:j_idt4829:j_idt4879"});});</script></li><li class=""><a id="main-form:j_idt4829:j_idt4882" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4882&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4882&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;});return false;">
+                                        Alle Wochen
+                                    </a><script id="main-form:j_idt4829:j_idt4882_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4882",{id:"main-form:j_idt4829:j_idt4882"});});</script></li></ul>
+
+                            <div class="clearfix"></div><div class="gutter-v-2"></div><div id="single-day" class="tab-pane">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Tagesauswahl</label><div id="main-form:j_idt4829:single-day-date" class="moses-inputdate " style=""><div onclick="Moses.Component.InputDateTime.nobubble(event)"><input name="main-form:j_idt4829:single-day-date_picker_visible" type="hidden" value="false" /><input name="main-form:j_idt4829:single-day-date_picker_month" type="hidden" value="JUNE" /><input name="main-form:j_idt4829:single-day-date_picker_year" type="hidden" value="2025" /><div id="main-form:j_idt4829:single-day-date_picker" class="moses-inputdate-picker" style="display: none;"><div class="moses-inputdate-backdrop"></div><div class="switchers"><div class="switcher"><h4><a class="switcher-left" onclick="Moses.Component.InputDateTime.month('main-form:j_idt4829:single-day-date', 'MAY', '2025')"><span class="switcher-left-icon"></span></a>Juni<a class="switcher-right" onclick="Moses.Component.InputDateTime.month('main-form:j_idt4829:single-day-date', 'JULY', '2025')"><span class="switcher-right-icon"></span></a></h4></div><div class="switcher"><h4><a class="switcher-left" onclick="Moses.Component.InputDateTime.year('main-form:j_idt4829:single-day-date', '2024')"><span class="switcher-left-icon"></span></a>2025<a class="switcher-right" onclick="Moses.Component.InputDateTime.year('main-form:j_idt4829:single-day-date', '2026')"><span class="switcher-right-icon"></span></a></h4></div></div><table class="table picker-table"><thead><tr><th class="week-facet-cell">SW</th><th>Mo.</th><th>Di.</th><th>Mi.</th><th>Do.</th><th>Fr.</th><th>Sa.</th><th>So.</th></tr></thead><tbody><tr><td class="week-facet-cell">
+                                                    7</td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '26.05.2025', 'MAY', '2025')"><span>26</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '27.05.2025', 'MAY', '2025')"><span>27</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '28.05.2025', 'MAY', '2025')"><span>28</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '29.05.2025', 'MAY', '2025')"><span>29</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '30.05.2025', 'MAY', '2025')"><span>30</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '31.05.2025', 'MAY', '2025')"><span>31</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '01.06.2025', 'JUNE', '2025')"><span>1</span></td></tr><tr><td class="week-facet-cell">
+                                                    8</td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '02.06.2025', 'JUNE', '2025')"><span>2</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '03.06.2025', 'JUNE', '2025')"><span>3</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '04.06.2025', 'JUNE', '2025')"><span>4</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '05.06.2025', 'JUNE', '2025')"><span>5</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '06.06.2025', 'JUNE', '2025')"><span>6</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '07.06.2025', 'JUNE', '2025')"><span>7</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '08.06.2025', 'JUNE', '2025')"><span>8</span></td></tr><tr><td class="week-facet-cell">
+                                                    9</td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '09.06.2025', 'JUNE', '2025')"><span>9</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '10.06.2025', 'JUNE', '2025')"><span>10</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '11.06.2025', 'JUNE', '2025')"><span>11</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '12.06.2025', 'JUNE', '2025')"><span>12</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '13.06.2025', 'JUNE', '2025')"><span>13</span></td><td class=" today" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '14.06.2025', 'JUNE', '2025')"><span>14</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '15.06.2025', 'JUNE', '2025')"><span>15</span></td></tr><tr><td class="week-facet-cell">
+                                                    10</td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '16.06.2025', 'JUNE', '2025')"><span>16</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '17.06.2025', 'JUNE', '2025')"><span>17</span></td><td class=" selected" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', null, 'JUNE', '2025')"><span>18</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '19.06.2025', 'JUNE', '2025')"><span>19</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '20.06.2025', 'JUNE', '2025')"><span>20</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '21.06.2025', 'JUNE', '2025')"><span>21</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '22.06.2025', 'JUNE', '2025')"><span>22</span></td></tr><tr><td class="week-facet-cell">
+                                                    11</td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '23.06.2025', 'JUNE', '2025')"><span>23</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '24.06.2025', 'JUNE', '2025')"><span>24</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '25.06.2025', 'JUNE', '2025')"><span>25</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '26.06.2025', 'JUNE', '2025')"><span>26</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '27.06.2025', 'JUNE', '2025')"><span>27</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '28.06.2025', 'JUNE', '2025')"><span>28</span></td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '29.06.2025', 'JUNE', '2025')"><span>29</span></td></tr><tr><td class="week-facet-cell">
+                                                    12</td><td class="" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '30.06.2025', 'JUNE', '2025')"><span>30</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '01.07.2025', 'JULY', '2025')"><span>1</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '02.07.2025', 'JULY', '2025')"><span>2</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '03.07.2025', 'JULY', '2025')"><span>3</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '04.07.2025', 'JULY', '2025')"><span>4</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '05.07.2025', 'JULY', '2025')"><span>5</span></td><td class=" other-month" onclick="Moses.Component.InputDateTime.date('main-form:j_idt4829:single-day-date', '06.07.2025', 'JULY', '2025')"><span>6</span></td></tr></tbody></table></div><div class="input-group"><div class="input-day">Mi.</div><input name="main-form:j_idt4829:single-day-date_date" class="input-date form-control" type="text" placeholder="dd.mm.yyyy" value="18.06.2025" onchange=";PrimeFaces.ab({s:&quot;main-form:j_idt4829:single-day-date&quot;,e:&quot;change&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:single-day-date main-form:j_idt4829:calendar&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter main-form:j_idt4829:single-day-sub-picker&quot;,ps:true});;" style="" /><a class="picker-toggle" onclick="Moses.Component.InputDateTime.togglePicker('main-form:j_idt4829:single-day-date', event)"><span class="toggle-icon"></span></a></div></div><script>Moses.Component.InputDateTime.restore('main-form:j_idt4829:single-day-date')</script></div>
+                                        </div>
+                                    </div><div id="main-form:j_idt4829:single-day-sub-picker" class="col-md-8">
+                                        <div class="form-group">
+                                            <label> </label>
+                                            <h4 class="text-center" style="white-space: nowrap;"><a id="main-form:j_idt4829:j_idt4916" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4916&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4916 main-form:j_idt4829:calendar&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;,ps:true});return false;">
+                                                    <span class="fa fam-next-left fa-fw"></span></a><script id="main-form:j_idt4829:j_idt4916_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4916",{id:"main-form:j_idt4829:j_idt4916"});});</script>18.06.2025(SW 10)<a id="main-form:j_idt4829:j_idt4920" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt4920&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt4829:j_idt4920 main-form:j_idt4829:calendar&quot;,u:&quot;main-form:j_idt4829:calendar-including-filter&quot;,ps:true});return false;">
+                                                    <span class="fa fam-next-right fa-fw"></span></a><script id="main-form:j_idt4829:j_idt4920_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt4920",{id:"main-form:j_idt4829:j_idt4920"});});</script>
+                                            </h4>
+                                        </div></div>
+                                </div></div>
+
+                            
+                            <div class="tab-calendar-settings-well">
+
+        <div id="main-form:j_idt4829:j_idt4925" class="moses-collapsible tab-calendar-settings-collapsible collapsed"><input id="main-form:j_idt4829:j_idt4925:state" type="hidden" name="main-form:j_idt4829:j_idt4925:state" value="true" />
+
+            <div class="moses-collapsible-header" onclick="Moses.Component.Collapsible.toggle('main-form:j_idt4829:j_idt4925', event, '', '', ''); return false;">
+                Kalenderoptionen
+                
+            </div>
+
+        </div>
+                            </div><div id="main-form:j_idt4829:calendar" class="tab-calendar-calendar"><div id="main-form:j_idt4829:calendar-component" class="moses-calendar-wrapper" data-testid="calendar"><div class="moses-calendar calendar-component ruled  moses-calendar-1" style=""><div class="moses-calendar-timeline"><div class="moses-calendar-timeline-header"></div><div class="moses-calendar-timeline-body" style="height: 520.000000px;"><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(0.000000px + 0.0em)">08:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(40.000000px + 0.0em)">09:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(80.000000px + 0.0em)">10:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(120.000000px + 0.0em)">11:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(160.000000px + 0.0em)">12:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(200.000000px + 0.0em)">13:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(240.000000px + 0.0em)">14:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(280.000000px + 0.0em)">15:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(320.000000px + 0.0em)">16:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(360.000000px + 0.0em)">17:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(400.000000px + 0.0em)">18:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(440.000000px + 0.0em)">19:00</div><div class="moses-calendar-timeline-marker" style="line-height: 0;position: relative;top: calc(480.000000px + 0.0em)">20:00</div></div></div><div class="moses-calendar-days"><input name="main-form:j_idt4829:calendar-component_scroll_left" type="hidden" value="0.0" /><div id="main-form:j_idt4829:calendar-component:0:-1" class="moses-calendar-day" style="width: 100.000000%;"><div class="moses-calendar-day-header">
+                                            Mi. 18.06.2025
+                                        </div><div class="moses-calendar-day-body" style="background-size: auto 40px !important;height: 520.000000px;"><div class="moses-calendar-day-body-inner"><div id="main-form:j_idt4829:calendar-component:0:0" class="moses-calendar-event-wrapper" style="width: 100.000000%;height: 80.000000px;top: 0.000000px;left: 0.000000%;"><div id="main-form:j_idt4829:calendar-component:0:0:event" class="moses-calendar-event ellipsis                                                 yellow"><span class="popover-anchor" id="main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dto-popover" style="display: block; width: 100%; height: 100%;" data-toggle="popover" data-animation="false" data-container="body" data-delay="0" data-trigger="hover" data-placement="top" data-collision="fit" data-hide-others="false" data-popover-class="termin-popover hidden-xs" data-popover-style=""><div class="title" style="display: none">Advanced Cloud Prototyping (Projekt)  <div class="clearfix"></div></div><div class="content" style="display: none"><div class="row"><div class="col-sm-6"><div class="form-group"><label>LV-Nummer</label><br/>3436 L 10610</div></div><div class="col-sm-6"><div class="form-group"><label>Format</label><br/>Projekt</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Sprache</label><br/>Englisch</div></div></div><div class="row"></div><div class="form-group"><label>Gruppe</label><br/>Group Work</div><div class="form-group"><label>Organisationseinheiten</label><br/>34361400 FG Wirtschaftsinformatik - Information Systems Engineering (ISE)</div><div class="row"></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Datum/Uhrzeit</label><br/>Mi. 18.06.25, 08:00 - 10:00</div></div><div class="col-sm-6"><div class="form-group"><label>Ort</label><br/>Charlottenburg, MAR 0.002</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Vor-/Nachbereitungsdauer</label><br/>0min/0min</div></div></div><div class="row"></div></div><a class="ellipsis" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=238958" data-testid="veranstaltung-name">Advanced Cloud Prototyping (Projekt)  </a><br/><small class="ellipsis">Group Work</small><br/><small class="ellipsis" data-testid="ort">Charlottenburg, <a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;szenario=null&amp;location=raumgruppe389&amp;dateforweek=2025-06-18&amp;search=true">MAR 0.002</a></small><br/>
+
+            <div class="bot-right"><div style="display: inline-block;" class="dropdown"><a id="main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dropdown" class="dropdown-toggle  " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                        <span class="caret" data-html2canvas-ignore="true"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dropdown"><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “34361400 FG Wirtschaftsinformatik - Information Systems Engineering (ISE)”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;oe=223&amp;search=true&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “34361400 FG Wirtschaftsinformatik - Information Systems Engineer...”</a></li><li title="Raum “MAR 0.002”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;location=raumgruppe389&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-raum"></span>Raum “MAR 0.002”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dropdown')</script></ul></div>
+            </div></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:calendar-component:0:0:out-buchung:out-termin-dto-popover')</script></div></div><div id="main-form:j_idt4829:calendar-component:0:1" class="moses-calendar-event-wrapper" style="width: 100.000000%;height: 80.000000px;top: 80.000000px;left: 0.000000%;"><div id="main-form:j_idt4829:calendar-component:0:1:event" class="moses-calendar-event ellipsis                                                 yellow"><span class="popover-anchor" id="main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dto-popover" style="display: block; width: 100%; height: 100%;" data-toggle="popover" data-animation="false" data-container="body" data-delay="0" data-trigger="hover" data-placement="top" data-collision="fit" data-hide-others="false" data-popover-class="termin-popover hidden-xs" data-popover-style=""><div class="title" style="display: none">Event-based Robot Vision (Übung)  <div class="clearfix"></div></div><div class="content" style="display: none"><div class="row"><div class="col-sm-6"><div class="form-group"><label>LV-Nummer</label><br/>3434 L 002</div></div><div class="col-sm-6"><div class="form-group"><label>Format</label><br/>Übung</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Sprache</label><br/>Englisch</div></div></div><div class="row"></div><div class="form-group"><label>Gruppe</label><br/>Termingruppe 4</div><div class="form-group"><label>Organisationseinheiten</label><br/>34342000 FG Robotic Interactive Perception</div><div class="form-group"><label>Dozierende</label><br/>Gallego, Guillermo</div><div class="row"></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Datum/Uhrzeit</label><br/>Mi. 18.06.25, 10:00 - 12:00</div></div><div class="col-sm-6"><div class="form-group"><label>Ort</label><br/>Charlottenburg, MAR 0.002</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Vor-/Nachbereitungsdauer</label><br/>0min/0min</div></div></div><div class="row"></div></div><a class="ellipsis" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=240026" data-testid="veranstaltung-name">Event-based Robot Vision (Übung)  </a><br/><small class="ellipsis">Termingruppe 4</small><br/><small class="ellipsis" data-testid="ort">Charlottenburg, <a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;szenario=null&amp;location=raumgruppe389&amp;dateforweek=2025-06-18&amp;search=true">MAR 0.002</a></small><br/><small class="ellipsis"><a>Gallego, Guillermo</a></small><br/>
+
+            <div class="bot-right"><div style="display: inline-block;" class="dropdown"><a id="main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dropdown" class="dropdown-toggle  " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                        <span class="caret" data-html2canvas-ignore="true"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dropdown"><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “34342000 FG Robotic Interactive Perception”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;oe=988&amp;search=true&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “34342000 FG Robotic Interactive Perception”</a></li><li title="Raum “MAR 0.002”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;location=raumgruppe389&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-raum"></span>Raum “MAR 0.002”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dropdown')</script></ul></div>
+            </div></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:calendar-component:0:1:out-buchung:out-termin-dto-popover')</script></div></div><div id="main-form:j_idt4829:calendar-component:0:2" class="moses-calendar-event-wrapper" style="width: 100.000000%;height: 160.000000px;top: 160.000000px;left: 0.000000%;"><div id="main-form:j_idt4829:calendar-component:0:2:event" class="moses-calendar-event ellipsis                                                 yellow"><span class="popover-anchor" id="main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dto-popover" style="display: block; width: 100%; height: 100%;" data-toggle="popover" data-animation="false" data-container="body" data-delay="0" data-trigger="hover" data-placement="top" data-collision="fit" data-hide-others="false" data-popover-class="termin-popover hidden-xs" data-popover-style=""><div class="title" style="display: none">Güterwirtschaftsverkehr (Integrierte Veranstaltung)  <div class="clearfix"></div></div><div class="content" style="display: none"><div class="row"><div class="col-sm-6"><div class="form-group"><label>LV-Nummer</label><br/>353319 L 03</div></div><div class="col-sm-6"><div class="form-group"><label>Format</label><br/>Integrierte Veranstaltung</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Sprache</label><br/>Deutsch</div></div></div><div class="row"></div><div class="form-group"><label>Gruppe</label><br/>Termingruppe 1</div><div class="form-group"><label>Organisationseinheiten</label><br/>35335901 FG Wirtschaftsverkehr</div><div class="form-group"><label>Dozierende</label><br/>Liedtke, Gernot</div><div class="row"></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Datum/Uhrzeit</label><br/>Mi. 18.06.25, 12:00 - 16:00</div></div><div class="col-sm-6"><div class="form-group"><label>Ort</label><br/>Charlottenburg, MAR 0.002</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Vor-/Nachbereitungsdauer</label><br/>0min/0min</div></div></div><div class="row"></div></div><a class="ellipsis" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=239428" data-testid="veranstaltung-name">Güterwirtschaftsverkehr (Integrierte Veranstaltung)  </a><br/><small class="ellipsis">Termingruppe 1</small><br/><small class="ellipsis" data-testid="ort">Charlottenburg, <a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;szenario=null&amp;location=raumgruppe389&amp;dateforweek=2025-06-18&amp;search=true">MAR 0.002</a></small><br/><small class="ellipsis"><a>Liedtke, Gernot</a></small><br/>
+
+            <div class="bot-right"><div style="display: inline-block;" class="dropdown"><a id="main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dropdown" class="dropdown-toggle  " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                        <span class="caret" data-html2canvas-ignore="true"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dropdown"><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “35335901 FG Wirtschaftsverkehr”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;oe=486&amp;search=true&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “35335901 FG Wirtschaftsverkehr”</a></li><li title="Raum “MAR 0.002”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;location=raumgruppe389&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-raum"></span>Raum “MAR 0.002”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dropdown')</script></ul></div>
+            </div></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:calendar-component:0:2:out-buchung:out-termin-dto-popover')</script></div></div><div id="main-form:j_idt4829:calendar-component:0:3" class="moses-calendar-event-wrapper" style="width: 100.000000%;height: 80.000000px;top: 320.000000px;left: 0.000000%;"><div id="main-form:j_idt4829:calendar-component:0:3:event" class="moses-calendar-event ellipsis                                                 yellow"><span class="popover-anchor" id="main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dto-popover" style="display: block; width: 100%; height: 100%;" data-toggle="popover" data-animation="false" data-container="body" data-delay="0" data-trigger="hover" data-placement="top" data-collision="fit" data-hide-others="false" data-popover-class="termin-popover hidden-xs" data-popover-style=""><div class="title" style="display: none">Algorithmen und Datenstrukturen (AlgoDat) (Übung) Mi., 16:00 Uhr - 18:00 Uhr<div class="clearfix"></div></div><div class="content" style="display: none"><div class="row"><div class="col-sm-6"><div class="form-group"><label>LV-Nummer</label><br/>0432 L 210T</div></div><div class="col-sm-6"><div class="form-group"><label>Format</label><br/>Übung</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Sprache</label><br/>Deutsch</div></div></div><div class="row"></div><div class="form-group"><label>Gruppe</label><br/>Mi., 16:00 Uhr - 18:00 Uhr</div><div class="form-group"><label>Organisationseinheiten</label><br/>34341700 FG Robotik | Robotics and Biology Laboratory</div><div class="row"></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Datum/Uhrzeit</label><br/>Mi. 18.06.25, 16:00 - 18:00</div></div><div class="col-sm-6"><div class="form-group"><label>Ort</label><br/>Charlottenburg, MAR 0.002</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Vor-/Nachbereitungsdauer</label><br/>0min/0min</div></div></div><div class="row"></div></div><a class="ellipsis" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=299188" data-testid="veranstaltung-name">Algorithmen und Datenstrukturen (AlgoDat) (Übung)</a><br/><small class="ellipsis">Mi., 16:00 Uhr - 18:00 Uhr</small><br/><small class="ellipsis" data-testid="ort">Charlottenburg, <a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;szenario=null&amp;location=raumgruppe389&amp;dateforweek=2025-06-18&amp;search=true">MAR 0.002</a></small><br/>
+
+            <div class="bot-right"><div style="display: inline-block;" class="dropdown"><a id="main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dropdown" class="dropdown-toggle  " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                        <span class="caret" data-html2canvas-ignore="true"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dropdown"><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “34341700 FG Robotik | Robotics and Biology Laboratory”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;oe=370&amp;search=true&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “34341700 FG Robotik | Robotics and Biology Laboratory”</a></li><li title="Raum “MAR 0.002”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;location=raumgruppe389&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-raum"></span>Raum “MAR 0.002”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dropdown')</script></ul></div>
+            </div></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:calendar-component:0:3:out-buchung:out-termin-dto-popover')</script></div></div><div id="main-form:j_idt4829:calendar-component:0:4" class="moses-calendar-event-wrapper" style="width: 100.000000%;height: 120.000000px;top: 400.000000px;left: 0.000000%;"><div id="main-form:j_idt4829:calendar-component:0:4:event" class="moses-calendar-event ellipsis                                                 yellow"><span class="popover-anchor" id="main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dto-popover" style="display: block; width: 100%; height: 100%;" data-toggle="popover" data-animation="false" data-container="body" data-delay="0" data-trigger="hover" data-placement="top" data-collision="fit" data-hide-others="false" data-popover-class="termin-popover hidden-xs" data-popover-style=""><div class="title" style="display: none"> SKB Spanischkurs A1.1 (Spa1) SoSe 2025 EXT <div class="clearfix"></div></div><div class="content" style="display: none"><div class="row"><div class="col-sm-6"><div class="form-group"><label>Format</label><br/>Event</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Sprache</label><br/>Deutsch</div></div></div><div class="row"></div><div class="form-group"><label>Organisationseinheiten</label><br/>44009700 Sprach- und Kulturbörse (SKB)</div><div class="row"></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Datum/Uhrzeit</label><br/>Mi. 18.06.25, 18:00 - 21:00</div></div><div class="col-sm-6"><div class="form-group"><label>Ort</label><br/>Charlottenburg, MAR 0.002</div></div></div><div class="row"><div class="col-sm-6"><div class="form-group"><label>Vor-/Nachbereitungsdauer</label><br/>0min/0min</div></div></div><div class="row"></div></div><a class="ellipsis" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=299506" data-testid="veranstaltung-name"> SKB Spanischkurs A1.1 (Spa1) SoSe 2025 EXT</a><br/><small class="ellipsis" data-testid="ort">Charlottenburg, <a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;szenario=null&amp;location=raumgruppe389&amp;dateforweek=2025-06-18&amp;search=true">MAR 0.002</a></small><br/>
+
+            <div class="bot-right"><div style="display: inline-block;" class="dropdown"><a id="main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dropdown" class="dropdown-toggle  " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                        <span class="caret" data-html2canvas-ignore="true"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dropdown"><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “44009700 Sprach- und Kulturbörse (SKB)”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;oe=909&amp;search=true&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “44009700 Sprach- und Kulturbörse (SKB)”</a></li><li title="Raum “MAR 0.002”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dropdown')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/raum.html?semester=74&amp;location=raumgruppe389&amp;calendarTab=WEEK&amp;dateforweek=2025-06-18" target="_blank" class=""><span class="fa fa-fw fa-space fam-raum"></span>Raum “MAR 0.002”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dropdown')</script></ul></div>
+            </div></span><script>Moses.Component.Popover.prepare('main-form:j_idt4829:calendar-component:0:4:out-buchung:out-termin-dto-popover')</script></div></div></div></div></div></div></div><script>Moses.Component.Calendar.restore('main-form:j_idt4829:calendar-component')</script></div></div>
+
+
+                            <div class="btn-toolbar pull-right">
+                            </div><div>
+        
+        
+        <div id="main-form:j_idt4829:j_idt5065" class="btn-group" style="display: inline;"><a id="main-form:j_idt4829:j_idt5065:btn-without-confirm" href="#" class="ui-commandlink ui-widget btn btn-default" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt4829:j_idt5065:btn-without-confirm&quot;,f:&quot;main-form&quot;,p:&quot;@none&quot;,u:&quot;@none&quot;,ps:false,onst:function(cfg){Moses.Component.CommandLink.start(cfg);;},onco:function(xhr,status,args,data){Moses.Component.CommandLink.complete(xhr); printPdf('main-form:j_idt4829:calendar-component', 'Stundenplan des Raumes MAR 0.002', 'SoSe 2025', 'false');}});return false;" style=""><div id="main-form:j_idt4829:j_idt5065:j_idt5092"><div id="main-form:j_idt4829:j_idt5065:j_idt5092_start" style="display:none">
+                            <span class="fa fa-space fa-circle-o-notch fa-spin"></span>Kalender als PDF exportieren
+                        </div><div id="main-form:j_idt4829:j_idt5065:j_idt5092_complete" style="display:none"><span class="fa fa-space fa-file-pdf-o"></span>
+                            Kalender als PDF exportieren
+                        </div><div id="main-form:j_idt4829:j_idt5065:j_idt5092_default"><span class="fa fa-space fa-file-pdf-o"></span>
+                            Kalender als PDF exportieren
+                        </div></div><script id="main-form:j_idt4829:j_idt5065:j_idt5092_s" type="text/javascript">$(function(){PrimeFaces.cw("AjaxStatus","widget_main_form_j_idt4829_j_idt5065_j_idt5092",{id:"main-form:j_idt4829:j_idt5065:j_idt5092",delay:0});});</script></a><script id="main-form:j_idt4829:j_idt5065:btn-without-confirm_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt4829_j_idt5065_btn_without_confirm",{id:"main-form:j_idt4829:j_idt5065:btn-without-confirm"});});</script>
+
+        </div></div>
+                            <div class="clearfix"></div></div><div id="main-form:j_idt4829:pinning-modal-wrapper"><div id="main-form:j_idt4829:pinning-modal" class="modal  draggable dragged collapsible resizable" aria-hidden="aria-hidden" tabindex="-1" role="dialog"><input id="main-form:j_idt4829:pinning-modal_input" name="main-form:j_idt4829:pinning-modal_input" hidden="true" value="DECLINED" onchange="Moses.Component.Modal.update('main-form:j_idt4829:pinning-modal', event)" /><input id="main-form:j_idt4829:pinning-modal_top" name="main-form:j_idt4829:pinning-modal_top" hidden="true" value="40px" /><input id="main-form:j_idt4829:pinning-modal_left" name="main-form:j_idt4829:pinning-modal_left" hidden="true" value="20px" /><input id="main-form:j_idt4829:pinning-modal_width" name="main-form:j_idt4829:pinning-modal_width" hidden="true" value="" /><input id="main-form:j_idt4829:pinning-modal_height" name="main-form:j_idt4829:pinning-modal_height" hidden="true" value="" /><div class="modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" class="close btn" onclick="Moses.Component.Modal.decline('main-form:j_idt4829:pinning-modal', event)" aria-label="Abbrechen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-close"></span></button><button type="button" class="close but" onclick="Moses.Component.Modal.collapse('main-form:j_idt4829:pinning-modal', event)" aria-label="Einklappen"><span aria-hidden="aria-hidden" class="fa fa-fw fa-minus"></span></button><h4 class="modal-title"></h4></div><div class="modal-body"></div></div></div><script>Moses.Component.Modal.restore('main-form:j_idt4829:pinning-modal', {'backdrop':'true','keyboard':true,'draggable':true,'dragged':true,'styleTop':'40px','styleLeft':'20px','resizable':true,'resized':false,'styleWidth':'','styleHeight':'','collapse':false,'show':false})</script></div></div></div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function printPdf (calendarId, title, subtitle, a3) {
+                var element = document.getElementById(calendarId);
+
+                var a3bool = (a3 === 'true');
+                var format = a3bool ? 'a3' : 'a4';
+                var width = a3bool ? 1550 : 1060;
+                var margintop = a3bool ? 40 : 40;
+                var titlesize = a3bool ? 18 : 12;
+                var subtitlesize = a3bool ? 18 : 12;
+                var titlevmargin = a3bool ? 20 : 20;
+                var subtitlevmargin = a3bool ? 38 : 38;
+                var titlemaxwidth = a3bool ? 380 : 270;
+
+                margintop += (title.length / 130) * 5;
+                subtitlevmargin += (title.length / 130) * 5;
+
+                var opt = {
+                    filename: 'stundenplan.pdf',
+                    image: {type: 'jpeg', quality: 0.95},
+                    html2canvas: {
+                        scale: 2,
+                        scrollX: 0, scrollY: 0,
+                        width: width
+                    },
+                    margin: [margintop, 10, 10, 10],
+                    jsPDF: {
+                        unit: 'mm',
+                        format: format, orientation: 'l',
+                        hotfixes: ['px_scaling']
+                    }
+                };
+                html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                    pdf.setPage(1);
+                    pdf.setFontSize(titlesize);
+                    pdf.text(title, 10, titlevmargin, {maxWidth: titlemaxwidth});
+                    pdf.setFontSize(subtitlesize);
+                    pdf.setTextColor(150);
+                    pdf.text(subtitle, 10, subtitlevmargin, {maxWidth: titlemaxwidth});
+                }).save();
+            }
+        </script>
+
+                <div class="gutter-v-4"></div><div id="main-form:search-results-table">
+        <div id="main-form:j_idt5114"><div><div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:j_idt5125" href="#" class="ui-commandlink ui-widget btn btn-default btn-sm" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:j_idt5125&quot;,f:&quot;main-form&quot;,u:&quot;main-form:j_idt5114:export-modal-wrapper&quot;});return false;" title="Die XLS-Datei lässt sich mit MS Excel, Libre Office Calc und vielen weiteren Tabellenkalkulationen öffnen"><span class="fa fa-file-excel-o fa-space"></span> Liste als Excel-Datei exportieren
+                    </a><script id="main-form:j_idt5114:j_idt5125_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_j_idt5125",{id:"main-form:j_idt5114:j_idt5125"});});</script></div>
+                <div class="clearfix"></div>
+
+                <div class="gutter-v-1"></div>
+                <div class="table-responsive"><div id="main-form:j_idt5114:veranstaltung-table" class="ui-treetable ui-treetable-resizable ui-widget"><table role="treegrid" class="table " data-testid="veranstaltung-table"><thead id="main-form:j_idt5114:veranstaltung-table_head"><tr><th id="main-form:j_idt5114:veranstaltung-table:j_idt5132" class="ui-state-default ui-sortable-column ui-resizable-column ui-filter-column" aria-label="Name" style="width: 500px"><span class="ui-column-title">Name</span><span class="ui-sortable-column-icon ui-icon ui-icon-carat-2-n-s"></span><span class="ui-sortable-column-badge ui-helper-hidden"></span><input id="main-form:j_idt5114:veranstaltung-table:j_idt5132:filter" name="main-form:j_idt5114:veranstaltung-table:j_idt5132:filter" class="ui-column-filter ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all" value="" autocomplete="off" /></th><th id="main-form:j_idt5114:veranstaltung-table:j_idt5149" class="ui-state-default ui-sortable-column ui-resizable-column" aria-label="Format" style="width: 400px"><span class="ui-column-title">Format</span><span class="ui-sortable-column-icon ui-icon ui-icon-carat-2-n-s"></span><span class="ui-sortable-column-badge ui-helper-hidden"></span></th><th id="main-form:j_idt5114:veranstaltung-table:j_idt5181" class="ui-state-default ui-resizable-column col-actions col-center" style="width: 40px;"><span class="ui-column-title"></span></th></tr></thead><tbody id="main-form:j_idt5114:veranstaltung-table_data" class="ui-treetable-data ui-widget-content"><tr id="main-form:j_idt5114:veranstaltung-table_node_0" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="0" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=11665&amp;semester=74&amp;szenario=" title="">
+                                        Advanced Cloud Prototyping (Projekt)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:0:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:0:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:0:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:0:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_0_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:0:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Projekt
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:0:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:0:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:0:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/238958" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:0:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_1" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="1" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=5418&amp;semester=74&amp;szenario=" title="">
+                                        Algorithmen und Datenstrukturen (AlgoDat) (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:1:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:1:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:1:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:1:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_1_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:1:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:1:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:1:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:1:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/299188" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:1:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_2" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="2" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=3418&amp;semester=74&amp;szenario=" title="">
+                                        APASTE (Seminar)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:2:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:2:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:2:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:2:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_2_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:2:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Seminar
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:2:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:2:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:2:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/238885" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:2:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_3" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="3" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1158&amp;semester=74&amp;szenario=" title="">
+                                        Aviation Security (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:3:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:3:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:3:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:3:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_3_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:3:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:3:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:3:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:3:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240932" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:3:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_4" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="4" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1438&amp;semester=74&amp;szenario=" title="">
+                                        Bilanzierung und Kostenrechnung (Tutorium)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:4:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:4:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:4:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:4:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_4_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:4:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Tutorium
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:4:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:4:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Die Veranstaltungen dieser LV als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:4:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252532,240923" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltungen exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:4:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_5" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="5" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=10604&amp;semester=74&amp;szenario=" title="">
+                                        Blockchain Prototyping - Specialisation (Projekt)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:5:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:5:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:5:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:5:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_5_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:5:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Projekt
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:5:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:5:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:5:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/239397" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:5:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_6" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="6" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=8721&amp;semester=74&amp;szenario=" title="">
+                                        CAD im Luftfahrzeugbau (Projekt)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:6:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:6:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:6:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:6:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_6_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:6:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Projekt
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:6:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:6:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:6:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252312" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:6:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_7" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="7" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1547&amp;semester=74&amp;szenario=" title="">
+                                        Energy Economics - Energy System Modeling (EW-MOD) (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:7:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:7:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:7:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:7:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_7_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:7:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:7:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:7:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:7:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252328" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:7:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_8" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="8" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=10592&amp;semester=74&amp;szenario=" title="">
+                                        Event-based Robot Vision (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:8:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:8:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:8:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:8:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_8_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:8:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:8:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:8:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:8:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240026" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:8:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_9" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="9" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=10591&amp;semester=74&amp;szenario=" title="">
+                                        Event-based Robot Vision (Vorlesung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:9:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:9:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:9:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:9:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_9_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:9:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Vorlesung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:9:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:9:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:9:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/238756" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:9:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_10" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="10" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=11932&amp;semester=74&amp;szenario=" title="">
+                                        Forschungsdesigns für quantitative Abschlussarbeiten (Seminar)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:10:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:10:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:10:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:10:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_10_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:10:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Seminar
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:10:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:10:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:10:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/239289" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:10:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_11" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="11" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=5791&amp;semester=74&amp;szenario=" title="">
+                                        Fortgeschrittene Programmierung mit Java (Prog2) (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:11:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:11:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:11:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:11:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_11_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:11:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:11:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:11:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:11:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/298873" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:11:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_12" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="12" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=314&amp;semester=74&amp;szenario=" title="">
+                                        Grundlagen der Elektrotechnik (Service) (Tutorium)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:12:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:12:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:12:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:12:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_12_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:12:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Tutorium
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:12:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:12:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:12:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/298910" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:12:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_13" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="13" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=13108&amp;semester=74&amp;szenario=" title="">
+                                        Ethik und Technikphilosophie - alle Veranstaltungen (FG 31312100) (Seminar)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:13:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:13:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:13:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:13:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_13_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:13:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Seminar
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:13:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:13:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:13:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/299812" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:13:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_14" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="14" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=7431&amp;semester=74&amp;szenario=" title="">
+                                        Güterwirtschaftsverkehr (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:14:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:14:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:14:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:14:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_14_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:14:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:14:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:14:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:14:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/239428" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:14:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_15" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="15" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=5422&amp;semester=74&amp;szenario=" title="">
+                                        Informationssysteme und Datenanalyse (ISDA) (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:15:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:15:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:15:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:15:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_15_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:15:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:15:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:15:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:15:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/298714" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:15:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_16" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="16" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=3481&amp;semester=74&amp;szenario=" title="">
+                                        Organisation und Gesellschaft (Seminar)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:16:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:16:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:16:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:16:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_16_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:16:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Seminar
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:16:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:16:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:16:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240420" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:16:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_17" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="17" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=662&amp;semester=74&amp;szenario=" title="">
+                                        Praxis der Flugführung - klassisch (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:17:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:17:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:17:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:17:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_17_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:17:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:17:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:17:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:17:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252594" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:17:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_18" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="18" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1188&amp;semester=74&amp;szenario=" title="">
+                                        Soundscape und Community Noise (Seminar)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:18:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:18:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:18:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:18:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_18_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:18:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Seminar
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:18:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:18:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:18:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240911" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:18:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_19" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="19" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=10392&amp;semester=74&amp;szenario=" title="">
+                                        Soziologie des Ingenieur*innen-Berufs I (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:19:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:19:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:19:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:19:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_19_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:19:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:19:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:19:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:19:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/205752" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:19:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_20" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="20" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1058&amp;semester=74&amp;szenario=" title="">
+                                        Systemprogrammierung (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:20:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:20:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:20:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:20:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_20_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:20:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:20:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:20:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:20:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/299144" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:20:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_21" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="21" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=11199&amp;semester=74&amp;szenario=" title="">
+                                        Technik und Gesellschaft - Vertiefung (Integrierte Veranstaltung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:21:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:21:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:21:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:21:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_21_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:21:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Integrierte Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:21:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:21:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:21:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240407" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:21:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_22" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="22" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=2205&amp;semester=74&amp;szenario=" title="">
+                                        Thermodynamik I (Tutorium)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:22:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:22:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:22:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:22:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_22_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:22:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Tutorium
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:22:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:22:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:22:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240879" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:22:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_23" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="23" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/vorlage.html?veranstaltungsvorlage=1618&amp;semester=74&amp;szenario=" title="">
+                                        Treatment Effect Analysis (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:23:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:23:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:23:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:23:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_23_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:23:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:23:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:23:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:23:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/240775" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:23:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_24" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="24" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=210769" title="Blickwinkel (107-25)">
+                                        Blickwinkel (107-25)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:24:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:24:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:24:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:24:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_24_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:24:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / Event
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:24:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:24:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:24:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/210769" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “Eventmanagement”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:24:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=912&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “Eventmanagement”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:24:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_25" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="25" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=298126" title="BrainProducts Workshop">
+                                        BrainProducts Workshop
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:25:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:25:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:25:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:25:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_25_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:25:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / externe Veranstaltung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:25:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:25:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:25:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/298126" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “35321200 FG Biopsychologie und Neuroergonomie”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:25:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=378&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “35321200 FG Biopsychologie und Neuroergonomie”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:25:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_26" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="26" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=253085" title="ESN Berlin Onboarding (277-25)">
+                                        ESN Berlin Onboarding (277-25)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:26:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:26:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:26:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:26:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_26_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:26:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / Event
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:26:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:26:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:26:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/253085" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “Eventmanagement”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:26:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=912&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “Eventmanagement”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:26:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_27" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="27" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=298556" title="HF-Chapter Veranstaltung">
+                                        HF-Chapter Veranstaltung
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:27:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:27:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:27:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:27:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_27_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:27:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / Event
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:27:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:27:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:27:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/298556" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “35321400 FG Handlungs- und Automationspsychologie”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:27:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=338&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “35321400 FG Handlungs- und Automationspsychologie”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:27:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_28" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="28" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=299851" title="Kickertunier Freitagrunde">
+                                        Kickertunier Freitagrunde
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:28:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:28:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:28:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:28:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_28_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:28:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Workshop
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:28:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:28:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:28:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/299851" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “Fakultät IV”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:28:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=4&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “Fakultät IV”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:28:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_29" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="29" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=210639" title="LNDW (025-25)">
+                                        LNDW (025-25)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:29:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:29:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:29:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:29:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_29_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:29:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / Event
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:29:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:29:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:29:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/210639" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “Eventmanagement”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:29:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=912&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “Eventmanagement”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:29:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_30" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="30" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=299506" title=" SKB Spanischkurs A1.1 (Spa1) SoSe 2025 EXT">
+                                         SKB Spanischkurs A1.1 (Spa1) SoSe 2025 EXT
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:30:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:30:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:30:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:30:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_30_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:30:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            Event / Event
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:30:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:30:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:30:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/299506" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “44009700 Sprach- und Kulturbörse (SKB)”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:30:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=909&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “44009700 Sprach- und Kulturbörse (SKB)”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:30:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_31" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="31" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=252886" title="Webtechnologien (Übung)">
+                                        Webtechnologien (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:31:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:31:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:31:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:31:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_31_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:31:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:31:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:31:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:31:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252886" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “34335700 FG S-Professur Service Centric Networking (SNET)”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:31:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=388&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “34335700 FG S-Professur Service Centric Networking (SNET)”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:31:j_idt5187')</script></ul>
+                            </div></td></tr><tr id="main-form:j_idt5114:veranstaltung-table_node_32" class="ui-widget-content default ui-node-level-1" aria-expanded="false" data-rk="32" data-prk="root"><td role="gridcell" style="width: 500px"><span class="ui-treetable-toggler ui-icon ui-icon-triangle-1-e ui-c"></span>
+
+                            <div style="display: inline-block; max-width: 430px; vertical-align: middle">
+                                <div class="text-ellipsis"><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/veranstaltung.html?veranstaltung=252884" title="Webtechnologien (Übung)">
+                                        Webtechnologien (Übung)
+                                        </a>
+                                </div>
+                            </div>
+
+                            <div class="btn-toolbar pull-right" style="display: inline-block;"><a id="main-form:j_idt5114:veranstaltung-table:32:j_idt5144" href="#" class="ui-commandlink ui-widget btn btn-default btn-xs" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:veranstaltung-table:32:j_idt5144&quot;,f:&quot;main-form&quot;,p:&quot;main-form:j_idt5114:veranstaltung-table:32:j_idt5144&quot;,u:&quot;main-form:search-results&quot;,ps:true});return false;" style="padding-left: 2px; padding-right: 2px; margin-left: 8px" title="Im Kalender hervorheben">
+                                    <span class="ic ic-calendar-search ic-fw"></span></a><script id="main-form:j_idt5114:veranstaltung-table:32:j_idt5144_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_veranstaltung_table_32_j_idt5144",{id:"main-form:j_idt5114:veranstaltung-table:32:j_idt5144"});});</script>
+                            </div></td><td role="gridcell" style="width: 400px">
+                            LV / Übung
+                        </td><td role="gridcell" style="width: 40px;" class="col-actions col-center">
+                            <div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:veranstaltung-table:32:j_idt5187" class="dropdown-toggle btn btn-xs btn-default " style="" title="" role="button" data-toggle="dropdown" data-dropdown-position-my="right top" data-dropdown-position-at="right bottom" aria-haspopup="true" aria-expanded="false" data-dropdown-onshow="Moses.Component.TabCalendar.onDropdownShow()" data-dropdown-onhidden="Moses.Component.TabCalendar.onDropdownHidden()">
+                                    <span class="fa fam-options fa-fw"></span>
+                                    <span class="caret"></span></a><ul class="dropdown-menu  " style="" aria-labelledby="main-form:j_idt5114:veranstaltung-table:32:j_idt5187"><li title="Export" class="dropdown-header  " style=" ">Export</li><li title="Veranstaltung als iCal-Datei exportieren" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:32:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/cal/export/calveranstaltung/252884" download="stundenplan_export.ics" target="" class=""><span class="fa fa-fw fam-export"></span>Veranstaltung exportieren</a></li><li title="Übersicht nach..." class="dropdown-header  " style=" ">Übersicht nach...</li><li title="OE “34335700 FG S-Professur Service Centric Networking (SNET)”" class="  " style=" "><a onclick="Moses.Component.DropdownMenu.click(event, 'main-form:j_idt5114:veranstaltung-table:32:j_idt5187')" href="https://moseskonto.tu-berlin.de/moses/verzeichnis/veranstaltungen/organisationseinheit.html?semester=74&amp;szenario=null&amp;oe=388&amp;search=true" target="_blank" class=""><span class="fa fa-fw fa-space fam-oe"></span>OE “34335700 FG S-Professur Service Centric Networking (SNET)”</a></li><script>Moses.Component.DropdownMenu.prepare('main-form:j_idt5114:veranstaltung-table:32:j_idt5187')</script></ul>
+                            </div></td></tr></tbody></table><input id="main-form:j_idt5114:veranstaltung-table_resizableColumnState" name="main-form:j_idt5114:veranstaltung-table_resizableColumnState" type="hidden" autocomplete="off" value="" /></div><script id="main-form:j_idt5114:veranstaltung-table_s" type="text/javascript">$(function(){PrimeFaces.cw("TreeTable","widget_main_form_j_idt5114_veranstaltung_table",{id:"main-form:j_idt5114:veranstaltung-table",resizableColumns:true,liveResize:true,filter:true,sorting:true,multiSort:true,sortMetaOrder:[''],behaviors:{expand:function(ext,event) {PrimeFaces.ab({s:"main-form:j_idt5114:veranstaltung-table",e:"expand",f:"main-form",p:"main-form:j_idt5114:veranstaltung-table"},ext);},collapse:function(ext,event) {PrimeFaces.ab({s:"main-form:j_idt5114:veranstaltung-table",e:"collapse",f:"main-form",p:"main-form:j_idt5114:veranstaltung-table"},ext);}}});});</script>
+                </div>
+                <div class="gutter-v-1"></div><div class="btn-toolbar pull-right"><a id="main-form:j_idt5114:j_idt5199" href="#" class="ui-commandlink ui-widget btn btn-default btn-sm" onclick="PrimeFaces.ab({s:&quot;main-form:j_idt5114:j_idt5199&quot;,f:&quot;main-form&quot;,u:&quot;main-form:j_idt5114:export-modal-wrapper&quot;});return false;" title="Die XLS-Datei lässt sich mit MS Excel, Libre Office Calc und vielen weiteren Tabellenkalkulationen öffnen"><span class="fa fa-file-excel-o fa-space"></span> Liste als Excel-Datei exportieren
+                    </a><script id="main-form:j_idt5114:j_idt5199_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandLink","widget_main_form_j_idt5114_j_idt5199",{id:"main-form:j_idt5114:j_idt5199"});});</script></div>
+                <div class="clearfix"></div></div><div id="main-form:j_idt5114:export-modal-wrapper"></div><div id="main-form:j_idt5114:ical-modal-wrapper"></div>
+
+        </div></div>
+
+                <hr />
+
+        <div data-testid="output-room-properties-389" id="main-form:j_idt5352:0:j_idt5353">
+            <h3>MAR 0.002</h3>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group" data-testid="gebaeude">
+                        <label>Gebäude</label><br /><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/raeume/gebaeude_info.html?gebaeude=45">
+                            MAR
+
+                            </a>
+                    </div>
+                </div><div class="col-md-6">
+                    <div class="form-group" data-testid="stockwerk">
+                        <label>Stockwerk</label><br /><span style="font-style: italic;">Unbekannt</span>
+                    </div></div><div class="col-md-6">
+                    <div class="form-group" data-testid="adresse">
+                        <label>Adresse (Gebäude)</label><br /><a href="https://maps.google.com?q=Marchstra%C3%9Fe+%28MAR%29%0D%2C+Marchstra%C3%9Fe+23%0D%2C+10587+Berlin" target="_blank">
+                            Marchstraße (MAR), Marchstraße 23, 10587 Berlin
+
+                            </a>
+                    </div></div><div class="col-md-6">
+                    <div class="form-group" data-testid="oeffnungszeiten">
+                        <label>Öffnungszeiten</label><br />
+                         (Gebäude 06:00 Uhr - 22:00 Uhr)
+                    </div></div>
+
+                <div class="col-md-6">
+                    <div class="form-group" data-testid="typ">
+                        <label>Typ</label><br />Seminarraum
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Sitzplätze</label><br />
+                        <table>
+                            <tr>
+                                <td>
+                                    Gesamt:
+                                </td>
+                                <td style="float: right; margin-left: 20px" data-testid="sitplaetze">
+                                    40
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Zugehörigkeit</label><br /><span>
+                            Zentral verwaltet
+                        </span>
+                    </div>
+                </div><div class="col-md-6">
+                    <div class="form-group">
+                        <label>Eigenschaften</label><br />
+                            barrierefrei (Rollstuhlzugang selbständig nutzbar)
+                            <br />
+                            Beamer
+                            <br />
+                            Tafel
+                            <br />
+                            Tafel: Kreide
+                            <br />
+                            Tonanlage (Audiowiedergabe)
+                            
+                    </div></div>
+            </div>
+        </div>
+                    <hr />
+
+        <div data-testid="output-room-properties-1920" id="main-form:j_idt5352:1:j_idt5353">
+            <h3>MAR EG - alle Seminarräume</h3>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group" data-testid="gebaeude">
+                        <label>Gebäude</label><br /><a href="https://moseskonto.tu-berlin.de/moses/verzeichnis/raeume/gebaeude_info.html?gebaeude=45">
+                            MAR
+
+                            </a>
+                    </div>
+                </div><div class="col-md-6">
+                    <div class="form-group" data-testid="adresse">
+                        <label>Adresse (Gebäude)</label><br /><a href="https://maps.google.com?q=Marchstra%C3%9Fe+%28MAR%29%0D%2C+Marchstra%C3%9Fe+23%0D%2C+10587+Berlin" target="_blank">
+                            Marchstraße (MAR), Marchstraße 23, 10587 Berlin
+
+                            </a>
+                    </div></div><div class="col-md-6">
+                    <div class="form-group" data-testid="oeffnungszeiten">
+                        <label>Öffnungszeiten</label><br />
+                         (Gebäude 06:00 Uhr - 22:00 Uhr)
+                    </div></div>
+
+                <div class="col-md-6">
+                    <div class="form-group" data-testid="typ">
+                        <label>Typ</label><br />Seminarraum
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Sitzplätze</label><br />
+                        <table>
+                            <tr>
+                                <td>
+                                    Gesamt:
+                                </td>
+                                <td style="float: right; margin-left: 20px" data-testid="sitplaetze">
+                                    350
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Zugehörigkeit</label><br />
+                            innoCampus - Innovations- und Kompetenzzentrum
+                            
+                    </div>
+                </div><div class="col-md-6">
+                    <div class="form-group">
+                        <label>Eigenschaften</label><br />
+                            barrierefrei (Rollstuhlzugang selbständig nutzbar)
+                            <br />
+                            Beamer
+                            <br />
+                            Klausur: Papierklausur
+                            <br />
+                            Tafel: Kreide
+                            <br />
+                            Tonanlage (Audiowiedergabe)
+                            
+                    </div></div>
+            </div>
+        </div>
+                    <hr /></div>
+
+            
+            <script type="text/javascript">
+                function updateTokenColors () {
+                    on_update_command()
+                }
+
+                function setTokenColors () {
+                    const autocompleteId = "main-form:raum-autocomplete"
+                    const dict = JSON.parse(document.getElementById("main-form:location-autocomplete-style-json").value)
+                    Moses.Primefaces.Autocomplete.updateTokenColorsById(autocompleteId, dict)
+                }
+            </script><input id="main-form:location-autocomplete-style-json" type="hidden" name="main-form:location-autocomplete-style-json" value="{&quot;raum389&quot;:&quot;yellow&quot;}" /><script id="main-form:on_update_command" type="text/javascript">on_update_command = function() {return PrimeFaces.ab({s:"main-form:on_update_command",f:"main-form",u:"main-form",pa:arguments[0]});}</script><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:3" value="5834880724512351452:5940170970813731042" autocomplete="off" /><input type="hidden" name="javax.faces.ClientWindow" id="j_id1:javax.faces.ClientWindow:3" value="FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS:0" autocomplete="off" />
+</form>
+    </main>
+
+    <footer id="status">
+        <a href="http://www.innocampus.tu-berlin.de" target="_blank" class="status-item">
+            <img src="/moses/docs/images/template/operator-logo.png" alt="Logo von innoCampus" title="Moses wird betrieben durch innoCampus" />
+        </a>
+
+        <div class="status-item hidden-xs">
+            Version 6.05.290 (Realm 6.4.3)<br /> 
+        </div>
+
+        <div class="status-item justify-right">
+
+            <a href="http://www.tu.berlin/footer/impressum/" target="_blank"> Impressum </a> / <a href="/moses/credits.html"> Credits </a>
+        </div>
+    </footer>
+
+    <nav id="nav-bottom"></nav>
+
+
+    <script>
+        function ajaxStart () {
+            const indicator = document.getElementById("loading-indicator")
+            if (indicator) {
+                indicator.classList.add("loading")
+            }
+        }
+
+        function ajaxComplete () {
+            const indicator = document.getElementById("loading-indicator")
+            if (indicator) {
+                indicator.classList.remove("loading")
+            }
+        }
+    </script><div id="j_idt5412"></div><script id="j_idt5412_s" type="text/javascript">$(function(){PrimeFaces.cw("AjaxStatus","widget_j_idt5412",{id:"j_idt5412",delay:0,start:function(){ajaxStart();},complete:function(){ajaxComplete();}});});</script><script type="text/javascript" src="/moses/javax.faces.resource/nav.js.html;jsessionid=FAm45jchUxSJTyIk8Ho1KYHwABnNhThdxVhdYhZS.moseskonto?ln=dist"></script><script type="text/javascript">OmniFaces.Unload.init('03fcbbfa-3f12-4a06-abe5-85322bf5336e')</script><script type="text/javascript">$(function(){Moses.Util.UrlParam.remove('intervalStartDate');;Moses.Util.UrlParam.remove('intervalEndDate');;Moses.Util.UrlParam.remove('intervalStartTime');;Moses.Util.UrlParam.remove('intervalEndTime');;Moses.Util.UrlParam.remove('intervalIncludeWeekend');;setTokenColors();PrimeFaces.scrollTo('extended-options-wrapper');;});</script></body>
+</html>
