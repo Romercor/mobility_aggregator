@@ -5,7 +5,7 @@ from sqlalchemy import select, desc, and_
 from sqlalchemy.dialects.postgresql import insert
 import logging
 
-from database.models import MensaMenu, StudentSchedule
+from database.models import MensaMenu, StudentSchedule, RoomSchedule
 from database.connection import get_db_session
 from api.models import WeeklyMenu, StudentLecture
 
@@ -210,3 +210,103 @@ class DatabaseService:
         except Exception as e:
             logger.error(f"Failed to get schedule for {stupo}:{semester}: {str(e)}")
             return None
+    
+    @staticmethod
+    async def save_room_schedule(room_id: str, date: datetime, schedule_data: list) -> bool:
+        """
+        Save room schedule for a specific day (upsert).
+        """
+        try:
+            async for session in get_db_session():
+                stmt = insert(RoomSchedule).values(
+                    room_id=room_id,
+                    date=date,
+                    schedule_data=schedule_data,
+                    last_updated=datetime.now()
+                )
+                stmt = stmt.on_conflict_do_update(
+                    index_elements=['room_id', 'date'],
+                    set_={
+                        'schedule_data': stmt.excluded.schedule_data,
+                        'last_updated': stmt.excluded.last_updated
+                    }
+                )
+                await session.execute(stmt)
+                await session.commit()
+                logger.info(f"Saved room schedule for {room_id} on {date.date()}")
+                return True
+        except Exception as e:
+            logger.error(f"Failed to save room schedule for {room_id} on {date.date()}: {str(e)}")
+            return False
+
+    @staticmethod
+    async def get_room_schedule(room_id: str, date: datetime) -> Optional[dict]:
+        """
+        Get room schedule for a specific day.
+        """
+        try:
+            async for session in get_db_session():
+                result = await session.execute(
+                    select(RoomSchedule)
+                    .where(
+                        (RoomSchedule.room_id == room_id) &
+                        (RoomSchedule.date == date)
+                    )
+                    .order_by(desc(RoomSchedule.last_updated))
+                    .limit(1)
+                )
+                record = result.fetchone()
+                if record:
+                    return record[0].schedule_data
+                return None
+        except Exception as e:
+            logger.error(f"Failed to get room schedule for {room_id} on {date.date()}: {str(e)}")
+            return None
+
+    @staticmethod
+    async def delete_old_room_schedules(before_date: datetime) -> int:
+        """
+        Delete all room schedules older than before_date.
+        Returns number of deleted rows.
+        """
+        try:
+            async for session in get_db_session():
+                result = await session.execute(
+                    RoomSchedule.__table__.delete().where(RoomSchedule.date < before_date)
+                )
+                await session.commit()
+                logger.info(f"Deleted old room schedules before {before_date.date()}")
+                return result.rowcount if hasattr(result, "rowcount") else 0
+        except Exception as e:
+            logger.error(f"Failed to delete old room schedules: {str(e)}")
+            return 0
+
+    @staticmethod
+    async def update_weekly_room_schedules(provider, rooms_json_path: str):
+        """
+        Update all room schedules for the current week for all rooms in rooms_json_path.
+        """
+        import json
+        from datetime import timedelta
+
+        # Определяем текущую неделю (понедельник-воскресенье)
+        today = datetime.now()
+        week_start = today - timedelta(days=today.weekday())
+        week_dates = [week_start + timedelta(days=i) for i in range(7)]
+
+        # Загружаем id комнат
+        with open(rooms_json_path, "r") as f:
+            room_ids = json.load(f)
+
+        for room_id_num in room_ids:
+            room_id = f"raum{room_id_num}"
+            for date in week_dates:
+                date_str = date.strftime("%Y-%m-%d")
+                try:
+                    schedule = await provider.get_room_schedule(room_id, date_str)
+                    await DatabaseService.save_room_schedule(room_id, date.replace(hour=0, minute=0, second=0, microsecond=0), schedule)
+                except Exception as e:
+                    logger.error(f"Failed to update schedule for {room_id} on {date_str}: {str(e)}")
+
+        # Удаляем старые записи (старше начала текущей недели)
+        await DatabaseService.delete_old_room_schedules(week_start)

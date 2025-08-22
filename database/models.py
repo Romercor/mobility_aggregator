@@ -37,3 +37,17 @@ class StudentSchedule(Base):
     __table_args__ = (
         UniqueConstraint('stupo', 'semester', name='uk_stupo_semester'),
     )
+
+class RoomSchedule(Base):
+    """Room schedule storage (per room, per day)"""
+    __tablename__ = "room_schedules"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    room_id = Column(String(50), nullable=False, index=True)
+    date = Column(DateTime, nullable=False, index=True)  # день расписания (без времени)
+    schedule_data = Column(JSON, nullable=False)
+    last_updated = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint('room_id', 'date', name='uk_room_date'),
+    )

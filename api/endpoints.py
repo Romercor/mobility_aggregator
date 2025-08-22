@@ -704,16 +704,26 @@ async def api_room_schedule(
 ):
     """
     Получить расписание для указанной аудитории на конкретную дату.
+    Сначала ищет в базе, если нет — парсит, сохраняет и возвращает.
     """
     try:
+        # Преобразуем дату в datetime без времени
+        date_obj = datetime.datetime.strptime(date, "%Y-%m-%d")
+        date_obj = date_obj.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        # 1. Пробуем получить из базы
+        db_events = await DatabaseService.get_room_schedule(room_number, date_obj)
+        if db_events is not None:
+            return [RoomEvent(**event) for event in db_events]
+
+        # 2. Если нет в базе — парсим, сохраняем и возвращаем
         async with RoomScheduleProvider() as provider:
             events = await provider.get_room_schedule(room_number, date)
-
-        if not events:
+        if events:
+            await DatabaseService.save_room_schedule(room_number, date_obj, events)
+            return [RoomEvent(**event) for event in events]
+        else:
             return []
-
-        # Преобразуем словари в объекты RoomEvent
-        return [RoomEvent(**event) for event in events]
 
     except Exception as e:
         raise HTTPException(
