@@ -1,0 +1,570 @@
+[
+  {
+    "program_code": 24429,
+    "program_name": "Master of Education – Arbeitslehre (Kernfach) (Lehramt)"
+  },
+  {
+    "program_code": 24884,
+    "program_name": "Bachelor of Science – Arbeitslehre (Kernfach) (Lehramt)"
+  },
+  {
+    "program_code": 24885,
+    "program_name": "Bachelor of Science – Arbeitslehre (Zweitfach) (Lehramt)"
+  },
+  {
+    "program_code": 24808,
+    "program_name": "Master of Science – Architecture - Typology"
+  },
+  {
+    "program_code": 24878,
+    "program_name": "Bachelor of Science – Architektur"
+  },
+  {
+    "program_code": 24248,
+    "program_name": "Master of Science – Architektur"
+  },
+  {
+    "program_code": 24969,
+    "program_name": "Master of Science – Audiokommunikation und -technologie"
+  },
+  {
+    "program_code": 24775,
+    "program_name": "Master of Science – Automotive Systems"
+  },
+  {
+    "program_code": 106,
+    "program_name": "Master of Science – Bauingenieurwesen"
+  },
+  {
+    "program_code": 24846,
+    "program_name": "Bachelor of Science – Bauingenieurwesen"
+  },
+  {
+    "program_code": 24893,
+    "program_name": "Bachelor of Science – Bautechnik (Lehramt)"
+  },
+  {
+    "program_code": 24500,
+    "program_name": "Master of Education – Bautechnik (Lehramt)"
+  },
+  {
+    "program_code": 24860,
+    "program_name": "Master of Education – Bautechnik/Mathematik als Quereinstieg (Lehramt)"
+  },
+  {
+    "program_code": 24388,
+    "program_name": "Master of Arts – Bildungswissenschaft - Organisation und Beratung"
+  },
+  {
+    "program_code": 24957,
+    "program_name": "Master of Science – Biologische Chemie"
+  },
+  {
+    "program_code": 24814,
+    "program_name": "Master of Science – Biomedizinische Technik"
+  },
+  {
+    "program_code": 24423,
+    "program_name": "Bachelor of Science – Biotechnologie"
+  },
+  {
+    "program_code": 24456,
+    "program_name": "Master of Science – Biotechnologie"
+  },
+  {
+    "program_code": 24944,
+    "program_name": "Master of Science – Brauerei- und Getränketechnologie"
+  },
+  {
+    "program_code": 24943,
+    "program_name": "Bachelor of Science – Brauerei- und Getränketechnologie"
+  },
+  {
+    "program_code": 24945,
+    "program_name": "Bachelor of Engineering – Brauwesen"
+  },
+  {
+    "program_code": 24725,
+    "program_name": "Master of Arts – Bühnenbild Szenischer Raum"
+  },
+  {
+    "program_code": 24870,
+    "program_name": "Bachelor of Science – Chemie"
+  },
+  {
+    "program_code": 24926,
+    "program_name": "Master of Science – Chemie"
+  },
+  {
+    "program_code": 24881,
+    "program_name": "Bachelor of Science – Chemieingenieurwesen"
+  },
+  {
+    "program_code": 24473,
+    "program_name": "Master of Science – Chemieingenieurwesen"
+  },
+  {
+    "program_code": 24889,
+    "program_name": "Master of Science – Civil Systems Engineering"
+  },
+  {
+    "program_code": 24859,
+    "program_name": "Master of Science – Computational Engineering Science (Informationstechnik im Maschinenwesen)"
+  },
+  {
+    "program_code": 24821,
+    "program_name": "Bachelor of Science – Computational Engineering Science (Informationstechnik im Maschinenwesen)"
+  },
+  {
+    "program_code": 24750,
+    "program_name": "Master of Science – Computational Neuroscience"
+  },
+  {
+    "program_code": 24540,
+    "program_name": "Master of Science – Computer Engineering"
+  },
+  {
+    "program_code": 24541,
+    "program_name": "Master of Science – Computer Science (Informatik)"
+  },
+  {
+    "program_code": 130,
+    "program_name": "Master of Science – Denkmalpflege"
+  },
+  {
+    "program_code": 24902,
+    "program_name": "Master of Arts – Design & Computation"
+  },
+  {
+    "program_code": 24899,
+    "program_name": "Master of Arts – Deutsch als Fremd- und Fachsprache"
+  },
+  {
+    "program_code": 24956,
+    "program_name": "Master of Science – Economics and Sustainability"
+  },
+  {
+    "program_code": 24537,
+    "program_name": "Bachelor of Science – Elektrotechnik"
+  },
+  {
+    "program_code": 24536,
+    "program_name": "Master of Science – Elektrotechnik"
+  },
+  {
+    "program_code": 24597,
+    "program_name": "Master of Education – Elektrotechnik/Informationstechnik als Quereinstieg (Lehramt)"
+  },
+  {
+    "program_code": 24463,
+    "program_name": "Master of Education – Elektrotechnik (Lehramt)"
+  },
+  {
+    "program_code": 24406,
+    "program_name": "Bachelor of Science – Elektrotechnik (Lehramt)"
+  },
+  {
+    "program_code": 24861,
+    "program_name": "Master of Education – Elektrotechnik/Mathematik als Quereinstieg (Lehramt)"
+  },
+  {
+    "program_code": 24428,
+    "program_name": "Bachelor of Science – Energie- und Prozesstechnik"
+  },
+  {
+    "program_code": 7921,
+    "program_name": "Master of Science – Energie- und Verfahrenstechnik"
+  },
+  {
+    "program_code": 24838,
+    "program_name": "Master of Science – Environmental Planning"
+  },
+  {
+    "program_code": 24722,
+    "program_name": "Master of Arts – Environmental Policy and Planning"
+  },
+  {
+    "program_code": 24404,
+    "program_name": "Bachelor of Science – Ernährung/Lebensmittelwissenschaft (Lehramt)"
+  },
+  {
+    "program_code": 24498,
+    "program_name": "Master of Education – Ernährung/Lebensmittelwissenschaft (Lehramt)"
+  },
+  {
+    "program_code": 24812,
+    "program_name": "Master of Science – Fahrzeugtechnik"
+  },
+  {
+    "program_code": 24895,
+    "program_name": "Bachelor of Science – Fahrzeugtechnik (Lehramt)"
+  },
+  {
+    "program_code": 24560,
+    "program_name": "Master of Education – Fahrzeugtechnik (Lehramt)"
+  },
+  {
+    "program_code": 24963,
+    "program_name": "Master of Science – Gebäudeenergiesysteme"
+  },
+  {
+    "program_code": 24264,
+    "program_name": "Master of Science – Geodesy and Geoinformation Science"
+  },
+  {
+    "program_code": 24877,
+    "program_name": "Master of Science – Geotechnologie"
+  },
+  {
+    "program_code": 24876,
+    "program_name": "Bachelor of Science – Geotechnologie"
+  },
+  {
+    "program_code": 24896,
+    "program_name": "Master of Science – Historische Bauforschung und Denkmalpflege"
+  },
+  {
+    "program_code": 24968,
+    "program_name": "Master of Arts – Historische Urbanistik"
+  },
+  {
+    "program_code": 24815,
+    "program_name": "Master of Science – Human Factors"
+  },
+  {
+    "program_code": 24903,
+    "program_name": "Master of Science – ICT Innovation"
+  },
+  {
+    "program_code": 105,
+    "program_name": "Master of Science – Industrial and Network Economics"
+  },
+  {
+    "program_code": 24842,
+    "program_name": "Master of Science – Industrial Economics"
+  },
+  {
+    "program_code": 24544,
+    "program_name": "Bachelor of Science – Informatik"
+  },
+  {
+    "program_code": 24549,
+    "program_name": "Master of Education – Informationstechnik (Lehramt)"
+  },
+  {
+    "program_code": 24547,
+    "program_name": "Bachelor of Science – Informationstechnik (Lehramt)"
+  },
+  {
+    "program_code": 24862,
+    "program_name": "Master of Education – Informationstechnik/Mathematik als Quereinstieg (Lehramt)"
+  },
+  {
+    "program_code": 24781,
+    "program_name": "Master of Science – Information Systems Management (Wirtschaftsinformatik)"
+  },
+  {
+    "program_code": 24977,
+    "program_name": "Master of Science – Innovation Management, Entrepreneurship and Sustainability"
+  },
+  {
+    "program_code": 24394,
+    "program_name": "Master of Arts – Interdisziplinäre Antisemitismusforschung"
+  },
+  {
+    "program_code": 24399,
+    "program_name": "Bachelor of Arts – Kultur und Technik"
+  },
+  {
+    "program_code": 24844,
+    "program_name": "Bachelor of Arts – Kultur und Technik / Bildungswissenschaft"
+  },
+  {
+    "program_code": 24656,
+    "program_name": "Bachelor of Arts – Kultur und Technik / Kunstwissenschaft"
+  },
+  {
+    "program_code": 24658,
+    "program_name": "Bachelor of Arts – Kultur und Technik / Philosophie"
+  },
+  {
+    "program_code": 24660,
+    "program_name": "Bachelor of Arts – Kultur und Technik / Sprache und Kommunikation"
+  },
+  {
+    "program_code": 24662,
+    "program_name": "Bachelor of Arts – Kultur und Technik / Wissenschafts- и Technikgeschichte"
+  },
+  {
+    "program_code": 24925,
+    "program_name": "Master of Arts – Kunstwissenschaft"
+  },
+  {
+    "program_code": 18481,
+    "program_name": "Master of Science – Landschaftsarchitektur"
+  },
+  {
+    "program_code": 24787,
+    "program_name": "Bachelor of Science – Landschaftsarchitektur"
+  },
+  {
+    "program_code": 74,
+    "program_name": "Bachelor of Science – Landschaftsplanung und Landschaftsarchitektur"
+  },
+  {
+    "program_code": 24407,
+    "program_name": "Bachelor of Science – Land- und Gartenbauwissenschaft/Landschaftsgestaltung (Lehramt)"
+  },
+  {
+    "program_code": 24499,
+    "program_name": "Master of Education – Land- und Gartenbauwissenschaft/Landschaftsgestaltung (Lehramt)"
+  },
+  {
+    "program_code": 24946,
+    "program_name": "Bachelor of Science – Lebensmittelchemie"
+  },
+  {
+    "program_code": 24892,
+    "program_name": "Staatsexamen – Lebensmittelchemie"
+  },
+  {
+    "program_code": 24543,
+    "program_name": "Master of Science – Lebensmitteltechnologie"
+  },
+  {
+    "program_code": 24923,
+    "program_name": "Bachelor of Science – Lebensmitteltechnologie"
+  },
+  {
+    "program_code": 24843,
+    "program_name": "Master of Science – Luft- und Raumfahrttechnik"
+  },
+  {
+    "program_code": 24811,
+    "program_name": "Master of Science – Maschinenbau"
+  },
+  {
+    "program_code": 24809,
+    "program_name": "Bachelor of Science – Maschinenbau"
+  },
+  {
+    "program_code": 24929,
+    "program_name": "Bachelor of Science – Materialwissenschaft und Werkstofftechnik"
+  },
+  {
+    "program_code": 24377,
+    "program_name": "Bachelor of Science – Mathematik"
+  },
+  {
+    "program_code": 24410,
+    "program_name": "Master of Science – Mathematik"
+  },
+  {
+    "program_code": 24752,
+    "program_name": "Master of Science – Medieninformatik"
+  },
+  {
+    "program_code": 24545,
+    "program_name": "Bachelor of Science – Medieninformatik"
+  },
+  {
+    "program_code": 24836,
+    "program_name": "Bachelor of Science – Medientechnik"
+  },
+  {
+    "program_code": 24924,
+    "program_name": "Master of Science – Medientechnik"
+  },
+  {
+    "program_code": 24595,
+    "program_name": "Master of Education – Medientechnik (Lehramt)"
+  },
+  {
+    "program_code": 24890,
+    "program_name": "Bachelor of Science – Medientechnik (Lehramt)"
+  },
+  {
+    "program_code": 24707,
+    "program_name": "Master of Arts – Medienwissenschaft"
+  },
+  {
+    "program_code": 24513,
+    "program_name": "Master of Education – Metalltechnik (Lehramt)"
+  },
+  {
+    "program_code": 24408,
+    "program_name": "Bachelor of Science – Metalltechnik (Lehramt)"
+  },
+  {
+    "program_code": 24863,
+    "program_name": "Master of Education – Metalltechnik/Mathematik als Quereinstieg (Lehramt)"
+  },
+  {
+    "program_code": 24409,
+    "program_name": "Orientierungsstudium – MINTgrün Orientierungsstudium"
+  },
+  {
+    "program_code": 24928,
+    "program_name": "Bachelor of Science – Nachhaltiges Management"
+  },
+  {
+    "program_code": 24840,
+    "program_name": "Bachelor of Science – Naturwissenschaften in der Informationsgesellschaft"
+  },
+  {
+    "program_code": 24864,
+    "program_name": "Bachelor of Science – Öкologie und Umweltplanung"
+  },
+  {
+    "program_code": 24555,
+    "program_name": "Master of Science – Öкologie und Umweltplanung"
+  },
+  {
+    "program_code": 24534,
+    "program_name": "Master of Science – Patentingenieurwesen"
+  },
+  {
+    "program_code": 24753,
+    "program_name": "Bachelor of Science – Physik"
+  },
+  {
+    "program_code": 24845,
+    "program_name": "Master of Science – Physik"
+  },
+  {
+    "program_code": 24795,
+    "program_name": "Master of Science – Physikalische Ingenieurwissenschaft"
+  },
+  {
+    "program_code": 24897,
+    "program_name": "Bachelor of Science – Physikalische Ingenieurwissenschaft"
+  },
+  {
+    "program_code": 24796,
+    "program_name": "Master of Science – Planung und Betrieb im Verkehrswesen"
+  },
+  {
+    "program_code": 24942,
+    "program_name": "Master of Science – Process Energy and Environmental Systems Engineering"
+  },
+  {
+    "program_code": 24869,
+    "program_name": "Master of Science – Produktionstechnik"
+  },
+  {
+    "program_code": 24728,
+    "program_name": "Master of Science – Real Estate Management"
+  },
+  {
+    "program_code": 24953,
+    "program_name": "Master of Science – Regenerative Energiesysteme"
+  },
+  {
+    "program_code": 24813,
+    "program_name": "Master of Science – Schiffs- und Meerestechnik"
+  },
+  {
+    "program_code": 24931,
+    "program_name": "Master of Science – Scientific Computing"
+  },
+  {
+    "program_code": 24964,
+    "program_name": "Master of Arts – Soziologie technikwissenschaftlicher Richtung"
+  },
+  {
+    "program_code": 24418,
+    "program_name": "Bachelor of Arts – Soziologie technikwissenschaftlicher Richtung"
+  },
+  {
+    "program_code": 24477,
+    "program_name": "Master of Science – Space Engineering"
+  },
+  {
+    "program_code": 24713,
+    "program_name": "Master of Arts – Sprache und Kommunikation"
+  },
+  {
+    "program_code": 24837,
+    "program_name": "Master of Science – Stadtökologie (Urban Ecosystem Sciences)"
+  },
+  {
+    "program_code": 24961,
+    "program_name": "Master of Science – Stadt- und Regionalplanung"
+  },
+  {
+    "program_code": 24960,
+    "program_name": "Bachelor of Science – Stadt- und Regionalplanung"
+  },
+  {
+    "program_code": 24546,
+    "program_name": "Bachelor of Science – Technische Informatik"
+  },
+  {
+    "program_code": 24920,
+    "program_name": "Bachelor of Science – Technischer Umweltschutz"
+  },
+  {
+    "program_code": 24542,
+    "program_name": "Master of Science – Technischer Umweltschutz"
+  },
+  {
+    "program_code": 24412,
+    "program_name": "Master of Science – Technomathematik"
+  },
+  {
+    "program_code": 24379,
+    "program_name": "Bachelor of Science – Technomathematik"
+  },
+  {
+    "program_code": 24533,
+    "program_name": "Master of Science – Urban Design"
+  },
+  {
+    "program_code": 24727,
+    "program_name": "Master of Science – Urban Management"
+  },
+  {
+    "program_code": 24819,
+    "program_name": "Bachelor of Science – Verkehrswesen"
+  },
+  {
+    "program_code": 51,
+    "program_name": "Diplom – Volkswirtschaftslehre"
+  },
+  {
+    "program_code": 24927,
+    "program_name": "Bachelor of Science – Volkswirtschaftslehre"
+  },
+  {
+    "program_code": 24955,
+    "program_name": "Bachelor of Science – Volkswirtschaftslehre und Nachhaltigkeit"
+  },
+  {
+    "program_code": 24427,
+    "program_name": "Bachelor of Science – Werkstoffwissenschaften"
+  },
+  {
+    "program_code": 24958,
+    "program_name": "Master of Science – Werkstoffwissenschaften"
+  },
+  {
+    "program_code": 24921,
+    "program_name": "Bachelor of Science – Wirtschaftsinformatik"
+  },
+  {
+    "program_code": 1761,
+    "program_name": "Bachelor of Science – Wirtschaftsingenieurwesen"
+  },
+  {
+    "program_code": 24252,
+    "program_name": "Master of Science – Wirtschaftsingenieurwesen"
+  },
+  {
+    "program_code": 24386,
+    "program_name": "Bachelor of Science – Wirtschaftsmатhematik"
+  },
+  {
+    "program_code": 24411,
+    "program_name": "Master of Science – Wirtschaftматhematik"
+  }
+]

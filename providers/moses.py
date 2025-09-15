@@ -73,14 +73,30 @@ class StudentScheduleProvider(BaseProvider):
         filter_dates: bool = True
     ) -> tuple[List[StudentLecture], Optional[str]]:
         """
-        Get lectures AND study program name with Cache First strategy
+        Get lectures AND study program name with Database First strategy
         
         Returns:
             Tuple of (lectures, study_program_name)
         """
         cache_key = f"lectures_with_info:{stupo}:{semester}:{filter_dates}"
         
-        # 1. Check unified cache first
+        # 1. Check database first (if available)
+        if DB_AVAILABLE:
+            try:
+                db_data = await DatabaseService.get_student_schedule(stupo, semester)
+                if db_data:
+                    # Same scheduling logic for database
+                    if not self._should_refresh_schedule(db_data):
+                        print(f"Returning fresh data from database for {stupo}:{semester}")
+                        lectures = [StudentLecture(**lecture) for lecture in db_data["schedule_data"]]
+                        study_program_name = db_data["study_program_name"]
+                        return lectures, study_program_name
+                    else:
+                        print(f"Database data stale for {stupo}:{semester}")
+            except Exception as e:
+                print(f"Database query failed for {stupo}:{semester}: {str(e)}")
+        
+        # 2. Check cache as fallback
         try:
             cached_result = await moses_cache.get(cache_key)
             if cached_result:
@@ -94,35 +110,6 @@ class StudentScheduleProvider(BaseProvider):
                     print(f"Cache data stale for {stupo}:{semester}")
         except Exception as e:
             print(f"Cache error for {stupo}:{semester}: {str(e)}")
-        
-        # 2. Try database second (if available)
-        if DB_AVAILABLE:
-            try:
-                db_data = await DatabaseService.get_student_schedule(stupo, semester)
-                if db_data:
-                    # Same scheduling logic for database
-                    if not self._should_refresh_schedule(db_data):
-                        print(f"Returning fresh data from database for {stupo}:{semester}")
-                        lectures = [StudentLecture(**lecture) for lecture in db_data["schedule_data"]]
-                        study_program_name = db_data["study_program_name"]
-                        
-                        # Restore cache from database
-                        try:
-                            cache_data = {
-                                "lectures": [lecture.model_dump() for lecture in lectures],
-                                "study_program_name": study_program_name,
-                                "last_updated": db_data["last_updated"]
-                            }
-                            await moses_cache.set(cache_key, cache_data)
-                            print(f"Cache restored from DB for {stupo}:{semester}")
-                        except Exception as e:
-                            print(f"Error restoring cache for {stupo}:{semester}: {str(e)}")
-                        
-                        return lectures, study_program_name
-                    else:
-                        print(f"Database data stale for {stupo}:{semester}")
-            except Exception as e:
-                print(f"Database query failed for {stupo}:{semester}: {str(e)}")
         
         # 3. Scrape fresh data (last resort)
         print(f"Scraping fresh data for {stupo}:{semester}")

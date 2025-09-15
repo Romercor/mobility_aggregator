@@ -14,6 +14,8 @@ load_dotenv()
 from api.endpoints import router as api_router
 from utils.api_checker import check_and_update_apis
 from providers.RoomSchedule import RoomScheduleProvider
+from providers.moses import StudentScheduleProvider
+from providers.mensa import MensaProvider
 from database.service import DatabaseService
 
 # Логгер
@@ -39,8 +41,17 @@ async def startup_background_tasks():
     except Exception as e:
         print(f"Initial API check failed: {e}")
 
-    # Запускаем обновление расписания комнат как фоновую задачу (не блокирует запуск сервиса)
+    # Check for missed weekly updates and run them if needed
+    asyncio.create_task(check_and_run_missed_updates())
+
+    # Start room schedule background updater (non-blocking)
     asyncio.create_task(background_weekly_room_schedule_updater())
+
+    # Start Moses schedule background updater (non-blocking)
+    asyncio.create_task(background_weekly_moses_updater())
+
+    # Start Mensa menu background updater (non-blocking)
+    asyncio.create_task(background_weekly_mensa_updater())
 
     # Start background checker
     asyncio.create_task(background_api_checker())
@@ -57,11 +68,11 @@ async def background_api_checker():
 
 async def background_weekly_room_schedule_updater():
     """
-    Background task: update room schedules every week (Monday 00:05) и при запуске.
+    Background task: update room schedules every week (Monday 00:05) and on startup.
     """
     import datetime
 
-    # --- Обновление при запуске ---
+    # Update on startup
     try:
         rooms_json_path = os.getenv("ROOMS_JSON_PATH", "rooms_id.json")
         async with RoomScheduleProvider() as provider:
@@ -70,10 +81,10 @@ async def background_weekly_room_schedule_updater():
     except Exception as e:
         logger.error(f"Room schedule update on startup failed: {e}")
 
-    # --- Периодическое обновление каждую неделю ---
+    # Weekly update schedule
     while True:
         now = datetime.datetime.now()
-        # Следующий понедельник 00:05
+        # Next Monday 00:05
         next_monday = now + datetime.timedelta(days=(7 - now.weekday()))
         next_run = next_monday.replace(hour=0, minute=5, second=0, microsecond=0)
         sleep_seconds = (next_run - now).total_seconds()
@@ -87,6 +98,70 @@ async def background_weekly_room_schedule_updater():
             logger.info("Room schedules updated by weekly background task.")
         except Exception as e:
             logger.error(f"Weekly room schedule update failed: {e}")
+
+async def background_weekly_moses_updater():
+    """
+    Background task: update Moses student schedules every week (Monday 01:05) and on startup.
+    """
+    import datetime
+
+    # Update on startup
+    try:
+        programs_json_path = os.getenv("PROGRAMS_JSON_PATH", "program_catalog.json")
+        async with StudentScheduleProvider() as provider:
+            await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
+        logger.info("Moses schedules updated on startup (background).")
+    except Exception as e:
+        logger.error(f"Moses schedule update on startup failed: {e}")
+
+    # Weekly update schedule
+    while True:
+        now = datetime.datetime.now()
+        # Next Monday 01:05 (1 hour after rooms)
+        next_monday = now + datetime.timedelta(days=(7 - now.weekday()))
+        next_run = next_monday.replace(hour=1, minute=5, second=0, microsecond=0)
+        sleep_seconds = (next_run - now).total_seconds()
+        if sleep_seconds < 0:
+            sleep_seconds = 60 * 60 * 24  # fallback: 1 day
+        await asyncio.sleep(sleep_seconds)
+        try:
+            programs_json_path = os.getenv("PROGRAMS_JSON_PATH", "program_catalog.json")
+            async with StudentScheduleProvider() as provider:
+                await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
+            logger.info("Moses schedules updated by weekly background task.")
+        except Exception as e:
+            logger.error(f"Weekly Moses schedule update failed: {e}")
+
+async def background_weekly_mensa_updater():
+    """
+    Background task: update Mensa menus every week (Monday 02:00) and on startup.
+    """
+    import datetime
+
+    # Update on startup
+    try:
+        async with MensaProvider() as provider:
+            await DatabaseService.update_weekly_mensa_menus(provider)
+        logger.info("Mensa menus updated on startup (background).")
+    except Exception as e:
+        logger.error(f"Mensa menu update on startup failed: {e}")
+
+    # Weekly update schedule
+    while True:
+        now = datetime.datetime.now()
+        # Next Monday 02:00 (2 hours after Moses)
+        next_monday = now + datetime.timedelta(days=(7 - now.weekday()))
+        next_run = next_monday.replace(hour=2, minute=0, second=0, microsecond=0)
+        sleep_seconds = (next_run - now).total_seconds()
+        if sleep_seconds < 0:
+            sleep_seconds = 60 * 60 * 24  # fallback: 1 day
+        await asyncio.sleep(sleep_seconds)
+        try:
+            async with MensaProvider() as provider:
+                await DatabaseService.update_weekly_mensa_menus(provider)
+            logger.info("Mensa menus updated by weekly background task.")
+        except Exception as e:
+            logger.error(f"Weekly Mensa menu update failed: {e}")
 
 # Include API routes
 app.include_router(api_router, prefix="/api")
