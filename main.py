@@ -33,6 +33,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+async def check_startup_data_freshness():
+    """
+    Check if we need to update any data on startup using the existing
+    missed updates detection logic that checks for complete data coverage.
+    """
+    try:
+        missed_updates = await DatabaseService.check_missed_weekly_updates()
+
+        # Log what we found
+        total_missed = sum(missed_updates.values())
+        if total_missed > 0:
+            logger.info(f"Startup check: {total_missed} systems need updates: {missed_updates}")
+        else:
+            logger.info("Startup check: All data is fresh and complete")
+
+        return missed_updates
+
+    except Exception as e:
+        logger.error(f"Error checking startup data freshness: {e}")
+        # Return all True on error to be safe
+        return {"rooms": True, "moses": True, "mensa": True}
+
 @app.on_event("startup")
 async def startup_background_tasks():
     # Initial check on startup
@@ -41,14 +63,15 @@ async def startup_background_tasks():
     except Exception as e:
         print(f"Initial API check failed: {e}")
 
-    # Start room schedule background updater (non-blocking)
-    asyncio.create_task(background_weekly_room_schedule_updater())
+    # Check which systems need updates on startup
+    missed_updates = await check_startup_data_freshness()
 
-    # Start Moses schedule background updater (non-blocking)
-    asyncio.create_task(background_weekly_moses_updater())
+    # Start background updaters (non-blocking) - they'll use the missed_updates info
+    asyncio.create_task(background_weekly_room_schedule_updater(missed_updates.get("rooms", True)))
 
-    # Start Mensa menu background updater (non-blocking)
-    asyncio.create_task(background_weekly_mensa_updater())
+    asyncio.create_task(background_weekly_moses_updater(missed_updates.get("moses", True)))
+
+    asyncio.create_task(background_weekly_mensa_updater(missed_updates.get("mensa", True)))
 
     # Start background checker
     asyncio.create_task(background_api_checker())
@@ -63,35 +86,36 @@ async def background_api_checker():
         except Exception as e:
             print(f"API check error: {e}")
 
-async def background_weekly_room_schedule_updater():
+async def background_weekly_room_schedule_updater(needs_startup_update: bool = True):
     """
     Background task: update room schedules every week (Monday 00:05) and on startup.
     """
     import datetime
 
-    # Update on startup
-    try:
-        rooms_json_path = os.getenv("ROOMS_JSON_PATH")
-        if not rooms_json_path:
-            rooms_json_path = "rooms_id.json"
+    # Update on startup - using pre-computed freshness check
+    if needs_startup_update:
+        try:
+            logger.info("Room schedules need updating on startup...")
+            rooms_json_path = os.getenv("ROOMS_JSON_PATH")
+            if not rooms_json_path:
+                rooms_json_path = "rooms_id.json"
 
-        # If path is relative, make it relative to script directory
-        if not os.path.isabs(rooms_json_path):
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            rooms_json_path = os.path.join(script_dir, rooms_json_path)
+            # If path is relative, make it relative to script directory
+            if not os.path.isabs(rooms_json_path):
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                rooms_json_path = os.path.join(script_dir, rooms_json_path)
 
-        # Debug logging
-        logger.info(f"Looking for rooms file at: {rooms_json_path}")
-        logger.info(f"File exists: {os.path.exists(rooms_json_path)}")
-        logger.info(f"Current working directory: {os.getcwd()}")
-        logger.info(f"Script location: {os.path.abspath(__file__)}")
-        logger.info(f"Project root: {os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}")
+            # Debug logging
+            logger.info(f"Looking for rooms file at: {rooms_json_path}")
+            logger.info(f"File exists: {os.path.exists(rooms_json_path)}")
 
-        async with RoomScheduleProvider() as provider:
-            await DatabaseService.update_weekly_room_schedules(provider, rooms_json_path)
-        logger.info("Room schedules updated on startup (background).")
-    except Exception as e:
-        logger.error(f"Room schedule update on startup failed: {e}")
+            async with RoomScheduleProvider() as provider:
+                await DatabaseService.update_weekly_room_schedules(provider, rooms_json_path)
+            logger.info("Room schedules updated on startup (background).")
+        except Exception as e:
+            logger.error(f"Room schedule update on startup failed: {e}")
+    else:
+        logger.info("Room schedules are fresh, skipping startup update.")
 
     # Weekly update schedule
     while True:
@@ -118,32 +142,36 @@ async def background_weekly_room_schedule_updater():
         except Exception as e:
             logger.error(f"Weekly room schedule update failed: {e}")
 
-async def background_weekly_moses_updater():
+async def background_weekly_moses_updater(needs_startup_update: bool = True):
     """
     Background task: update Moses student schedules every week (Monday 01:05) and on startup.
     """
     import datetime
 
-    # Update on startup
-    try:
-        programs_json_path = os.getenv("PROGRAMS_JSON_PATH")
-        if not programs_json_path:
-            programs_json_path = "program_catalog.json"
+    # Update on startup - using pre-computed freshness check
+    if needs_startup_update:
+        try:
+            logger.info("Moses schedules need updating on startup...")
+            programs_json_path = os.getenv("PROGRAMS_JSON_PATH")
+            if not programs_json_path:
+                programs_json_path = "program_catalog.json"
 
-        # If path is relative, make it relative to script directory
-        if not os.path.isabs(programs_json_path):
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            programs_json_path = os.path.join(script_dir, programs_json_path)
+            # If path is relative, make it relative to script directory
+            if not os.path.isabs(programs_json_path):
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                programs_json_path = os.path.join(script_dir, programs_json_path)
 
-        # Debug logging
-        logger.info(f"Looking for programs file at: {programs_json_path}")
-        logger.info(f"File exists: {os.path.exists(programs_json_path)}")
+            # Debug logging
+            logger.info(f"Looking for programs file at: {programs_json_path}")
+            logger.info(f"File exists: {os.path.exists(programs_json_path)}")
 
-        async with StudentScheduleProvider() as provider:
-            await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
-        logger.info("Moses schedules updated on startup (background).")
-    except Exception as e:
-        logger.error(f"Moses schedule update on startup failed: {e}")
+            async with StudentScheduleProvider() as provider:
+                await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
+            logger.info("Moses schedules updated on startup (background).")
+        except Exception as e:
+            logger.error(f"Moses schedule update on startup failed: {e}")
+    else:
+        logger.info("Moses schedules are fresh, skipping startup update.")
 
     # Weekly update schedule
     while True:
@@ -170,19 +198,23 @@ async def background_weekly_moses_updater():
         except Exception as e:
             logger.error(f"Weekly Moses schedule update failed: {e}")
 
-async def background_weekly_mensa_updater():
+async def background_weekly_mensa_updater(needs_startup_update: bool = True):
     """
     Background task: update Mensa menus every week (Monday 02:00) and on startup.
     """
     import datetime
 
-    # Update on startup
-    try:
-        async with MensaProvider() as provider:
-            await DatabaseService.update_weekly_mensa_menus(provider)
-        logger.info("Mensa menus updated on startup (background).")
-    except Exception as e:
-        logger.error(f"Mensa menu update on startup failed: {e}")
+    # Update on startup - using pre-computed freshness check
+    if needs_startup_update:
+        try:
+            logger.info("Mensa menus need updating on startup...")
+            async with MensaProvider() as provider:
+                await DatabaseService.update_weekly_mensa_menus(provider)
+            logger.info("Mensa menus updated on startup (background).")
+        except Exception as e:
+            logger.error(f"Mensa menu update on startup failed: {e}")
+    else:
+        logger.info("Mensa menus are fresh, skipping startup update.")
 
     # Weekly update schedule
     while True:
