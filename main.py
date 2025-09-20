@@ -41,9 +41,6 @@ async def startup_background_tasks():
     except Exception as e:
         print(f"Initial API check failed: {e}")
 
-    # Check for missed weekly updates and run them if needed
-    asyncio.create_task(check_and_run_missed_updates())
-
     # Start room schedule background updater (non-blocking)
     asyncio.create_task(background_weekly_room_schedule_updater())
 
@@ -74,7 +71,22 @@ async def background_weekly_room_schedule_updater():
 
     # Update on startup
     try:
-        rooms_json_path = os.getenv("ROOMS_JSON_PATH", "rooms_id.json")
+        rooms_json_path = os.getenv("ROOMS_JSON_PATH")
+        if not rooms_json_path:
+            rooms_json_path = "rooms_id.json"
+
+        # If path is relative, make it relative to script directory
+        if not os.path.isabs(rooms_json_path):
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            rooms_json_path = os.path.join(script_dir, rooms_json_path)
+
+        # Debug logging
+        logger.info(f"Looking for rooms file at: {rooms_json_path}")
+        logger.info(f"File exists: {os.path.exists(rooms_json_path)}")
+        logger.info(f"Current working directory: {os.getcwd()}")
+        logger.info(f"Script location: {os.path.abspath(__file__)}")
+        logger.info(f"Project root: {os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}")
+
         async with RoomScheduleProvider() as provider:
             await DatabaseService.update_weekly_room_schedules(provider, rooms_json_path)
         logger.info("Room schedules updated on startup (background).")
@@ -92,7 +104,14 @@ async def background_weekly_room_schedule_updater():
             sleep_seconds = 60 * 60 * 24  # fallback: 1 day
         await asyncio.sleep(sleep_seconds)
         try:
-            rooms_json_path = os.getenv("ROOMS_JSON_PATH", "rooms_id.json")
+            rooms_json_path = os.getenv("ROOMS_JSON_PATH")
+            if not rooms_json_path:
+                rooms_json_path = "rooms_id.json"
+
+            # If path is relative, make it relative to script directory
+            if not os.path.isabs(rooms_json_path):
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                rooms_json_path = os.path.join(script_dir, rooms_json_path)
             async with RoomScheduleProvider() as provider:
                 await DatabaseService.update_weekly_room_schedules(provider, rooms_json_path)
             logger.info("Room schedules updated by weekly background task.")
@@ -107,7 +126,19 @@ async def background_weekly_moses_updater():
 
     # Update on startup
     try:
-        programs_json_path = os.getenv("PROGRAMS_JSON_PATH", "program_catalog.json")
+        programs_json_path = os.getenv("PROGRAMS_JSON_PATH")
+        if not programs_json_path:
+            programs_json_path = "program_catalog.json"
+
+        # If path is relative, make it relative to script directory
+        if not os.path.isabs(programs_json_path):
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            programs_json_path = os.path.join(script_dir, programs_json_path)
+
+        # Debug logging
+        logger.info(f"Looking for programs file at: {programs_json_path}")
+        logger.info(f"File exists: {os.path.exists(programs_json_path)}")
+
         async with StudentScheduleProvider() as provider:
             await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
         logger.info("Moses schedules updated on startup (background).")
@@ -125,7 +156,14 @@ async def background_weekly_moses_updater():
             sleep_seconds = 60 * 60 * 24  # fallback: 1 day
         await asyncio.sleep(sleep_seconds)
         try:
-            programs_json_path = os.getenv("PROGRAMS_JSON_PATH", "program_catalog.json")
+            programs_json_path = os.getenv("PROGRAMS_JSON_PATH")
+            if not programs_json_path:
+                programs_json_path = "program_catalog.json"
+
+            # If path is relative, make it relative to script directory
+            if not os.path.isabs(programs_json_path):
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                programs_json_path = os.path.join(script_dir, programs_json_path)
             async with StudentScheduleProvider() as provider:
                 await DatabaseService.update_weekly_moses_schedules(provider, programs_json_path)
             logger.info("Moses schedules updated by weekly background task.")
