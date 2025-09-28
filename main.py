@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import sys
 import os
 import logging
+import time
+from prometheus_fastapi_instrumentator import Instrumentator
 
 if sys.platform.startswith('win'):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
@@ -22,7 +24,22 @@ from database.service import DatabaseService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+
 app = FastAPI(title="Mobility Aggregator API")
+
+# Standardized FastAPI Prometheus instrumentation (like Litestar approach)
+instrumentator = Instrumentator(
+    should_group_status_codes=True,
+    should_ignore_untemplated=True,
+    should_group_untemplated=True,
+    excluded_handlers=["/metrics"],
+    inprogress_name="http_requests_inprogress",
+    inprogress_labels=True,
+)
+
+# Instrument the app automatically (like Litestar's built-in approach)
+instrumentator.instrument(app).expose(app)
 
 # CORS configuration
 app.add_middleware(
@@ -32,6 +49,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 async def check_startup_data_freshness():
     """
@@ -55,6 +73,7 @@ async def check_startup_data_freshness():
         # Return all True on error to be safe
         return {"rooms": True, "moses": True, "mensa": True}
 
+
 @app.on_event("startup")
 async def startup_background_tasks():
     # Initial check on startup
@@ -75,6 +94,9 @@ async def startup_background_tasks():
 
     # Start background checker
     asyncio.create_task(background_api_checker())
+
+    logger.info("Application startup completed")
+
 
 async def background_api_checker():
     while True:
