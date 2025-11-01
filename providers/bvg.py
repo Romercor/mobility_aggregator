@@ -260,10 +260,11 @@ class BvgProvider(BaseProvider):
                         arrival_time = departure_time + timedelta(minutes=1)
                     
                     # Get warnings
-                    warnings = []
-                    for remark in leg.get("remarks", []):
-                        if remark.get("type") == "warning" and "summary" in remark:
-                            warnings.append(remark["summary"])
+                    warnings = [
+                        remark["summary"]
+                        for remark in leg.get("remarks", [])
+                        if remark.get("type") == "warning" and remark.get("summary")
+                    ]
                     
                     # Extract platform information
                     platform = None
